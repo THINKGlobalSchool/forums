@@ -38,13 +38,13 @@ function forums_init() {
 	elgg_register_entity_url_handler('object', 'forum_reply', 'forum_reply_url');
 
 	// Register actions
-	$action_base = elgg_get_plugins_path() . 'forums/actions';
-	elgg_register_action('forum/save', "$action_base/forum/save.php", 'admin');
-	elgg_register_action('forum_topic/save', "$action_base/forum_topic/save.php");
-	elgg_register_action('forum_reply/save', "$action_base/forum_reply/save.php");
-	elgg_register_action('forum/save', "$action_base/forum/delete.php", 'admin');
-	elgg_register_action('forum_topic/save', "$action_base/forum_topic/delete.php");
-	elgg_register_action('forum_reply/save', "$action_base/forum_reply/delete.php");
+	$action_base = elgg_get_plugins_path() . 'forums/actions/forums';
+	elgg_register_action('forums/forum/save', "$action_base/forum/save.php", 'admin');
+	elgg_register_action('forums/forum_topic/save', "$action_base/forum_topic/save.php");
+	elgg_register_action('forums/forum_reply/save', "$action_base/forum_reply/save.php");
+	elgg_register_action('forums/forum/delete', "$action_base/forum/delete.php", 'admin');
+	elgg_register_action('forums/forum_topic/save', "$action_base/forum_topic/delete.php");
+	elgg_register_action('forums/forum_reply/save', "$action_base/forum_reply/delete.php");
 
 	return TRUE;
 }

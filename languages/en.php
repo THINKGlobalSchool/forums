@@ -18,10 +18,18 @@ $english = array(
 	'item:object:forum_reply' => 'Forum Replies',
 	'admin:forums' => 'Forums',
 	'admin:forums:manage' => 'Manage',
+	'admin:forums:add' => 'New Forum',
 
 	// Page titles 
 
 	// Labels
+	'forums:label:none' => 'No Forums',
+	'forums:label:current' => 'Current Forums',
+	'forums:label:new' => 'New Forum',
+	'forums:label:anonymous' => 'Anonymous Forum',
+	'forums:label:yes' => 'Yes',
+	'forums:label:no' => 'No',
+	'forums:label:moderator_role' => 'Moderator Role',
 
 	// River
 

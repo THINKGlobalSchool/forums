@@ -8,5 +8,22 @@
  * @copyright THINK Global School 2010
  * @link http://www.thinkglobalschool.com/
  * 
- */
-echo 'Forums';
+ */	
+
+$options = array(
+	'type' => 'object',
+	'subtype' => 'forum',
+	'limit' => 10,
+	'pagination' => TRUE,
+	'full_view' => FALSE,
+);
+
+$forums = elgg_list_entities($options);
+
+if (!$forums) {
+	$forums = elgg_echo('forums:label:none');
+}
+
+echo "<a href='". elgg_get_site_url() . "admin/forums/add' class='elgg-button elgg-button-action'>" . elgg_echo('forums:label:new') . "</a><div style='clear: both;'></div>";
+
+echo elgg_view_module('inline', elgg_echo('forums:label:current'), $forums);
