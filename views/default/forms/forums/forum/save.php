@@ -23,7 +23,6 @@ if ($guid) {
 		'name' => 'guid',
 		'value' => $guid,
 	));
-	
 	$entity = get_entity($guid);
 } 
 

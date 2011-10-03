@@ -13,14 +13,17 @@
 $english = array(
 	// Generic
 	'forum' => 'Forum',
+	'forums' => 'Forums',
 	'item:object:forum' => 'Forums',
 	'item:object:forum_topic' => 'Forum Topics',
 	'item:object:forum_reply' => 'Forum Replies',
 	'admin:forums' => 'Forums',
 	'admin:forums:manage' => 'Manage',
 	'admin:forums:add' => 'New Forum',
+	'admin:forums:edit' => 'Edit Forum',
 
 	// Page titles 
+	'forums:title:allforums' => 'All Site Forums',
 
 	// Labels
 	'forums:label:none' => 'No Forums',
@@ -36,6 +39,7 @@ $english = array(
 	// Messages
 	'forums:error:requiredfields' => 'One or more required fields are missing',
 	'forums:error:notfound' => 'Item not found',
+	'forums:error:permissiondenied' => 'You do not have permission to view this item',
 	'forums:error:forum:delete' => 'There was an error deleting the forum',
 	'forums:error:forum:save' => 'There was an error saving the forum',
 	'forums:error:forum:edit' => 'There was an error editing the forum',

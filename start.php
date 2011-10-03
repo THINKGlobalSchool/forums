@@ -32,6 +32,9 @@ function forums_init() {
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
 
+	// Item entity menu hook
+	elgg_register_plugin_hook_handler('register', 'menu:entity', 'forums_setup_entity_menu', 999);
+
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
 	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
@@ -52,13 +55,28 @@ function forums_init() {
 /**
  * Forum page handler
  */
-function forum_page_handler($page) {
-
+function forums_page_handler($page) {
+	gatekeeper(); // Logged in only
+	
+	elgg_push_breadcrumb(elgg_echo('forums'), elgg_get_site_url() . "forums/all");	
+	
 	switch($page[0]) {
+		case 'view':
+			$params = forums_get_page_content_view($page[1]);
+			break;
+		case 'all':
 		default: 
+			$params = forums_get_page_content_list();
 			break;
 	}
+	
+	// Custom sidebar (none at the moment)
+	$params['sidebar'] .= elgg_view('todo/sidebar');
 
+	$body = elgg_view_layout('content', $params);
+
+	echo elgg_view_page($params['title'], $body);
+	
 	return TRUE;
 }
 
@@ -99,6 +117,43 @@ function forums_submenus() {
 	if (elgg_in_context('admin')) {
 		elgg_register_admin_menu_item('administer', 'manage', 'forums');
 	}
+}
+
+/**
+ * Item entity plugin hook
+ */
+function forums_setup_entity_menu($hook, $type, $return, $params) {
+	$entity = $params['entity'];
+
+	if (!elgg_instanceof($entity, 'object', 'forum')) {
+		return $return;
+	}
+
+	$return = array();
+
+	// Admin Only
+	if (elgg_is_admin_logged_in()) {
+		$options = array(
+			'name' => 'edit',
+			'text' => elgg_echo('edit'),
+			'href' => elgg_get_site_url() . 'admin/forums/edit?guid=' . $entity->guid,
+			'priority' => 2,
+		);
+		$return[] = ElggMenuItem::factory($options);
+
+		$options = array(
+			'name' => 'delete',
+			'text' => elgg_view_icon('delete'),
+			'title' => elgg_echo('delete:this'),
+			'href' => "action/{$params['handler']}/delete?guid={$entity->getGUID()}",
+			'confirm' => elgg_echo('deleteconfirm'),
+			'priority' => 3,
+		);
+
+		$return[] = ElggMenuItem::factory($options);
+	}
+
+	return $return;
 }
 
 

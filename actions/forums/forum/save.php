@@ -33,7 +33,7 @@ if (!$guid) {
 	$forum->access_id = ACCESS_LOGGED_IN;
 } else { // Editing
 	$forum = get_entity($guid);
-	if (!elgg_instanceof($guid, 'object', 'forum')) {
+	if (!elgg_instanceof($forum, 'object', 'forum')) {
 		register_error(elgg_echo('forums:error:forum:edit'));
 		forward(REFERER);
 	}
