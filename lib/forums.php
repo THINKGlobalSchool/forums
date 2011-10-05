@@ -188,3 +188,50 @@ function forums_prepare_topic_form_vars($topic, $container_guid = '') {
 
 	return $values;
 }
+
+/** Prepare reply form vars */
+function forums_prepare_reply_form_vars($reply, $topic_guid, $reply_guid = NULL) {
+	// input names => defaults
+	$values = array(
+		'description' => '',
+		'topic_guid' => $topic_guid,
+		'reply_guid' => $reply_guid ? $reply_guid : $topic_guid,
+		'guid' => '',
+	);
+
+	if ($reply) {
+		foreach (array_keys($values) as $field) {
+			$values[$field] = $reply->$field;
+		}
+	}
+
+	if (elgg_is_sticky_form('forum-topic-edit-form')) {
+		foreach (array_keys($values) as $field) {
+			$values[$field] = elgg_get_sticky_value('forum-topic-edit-form', $field);
+		}
+	}
+
+	elgg_clear_sticky_form('forum-topic-edit-form');
+
+	return $values;
+}
+
+/**
+ * Get the parent reply that given reply is in response to
+ * 
+ * @param ElggEntity $reply the reply
+ * @return ElggEntity the reply/topic
+ */
+function forums_get_reply_parent($reply) {
+	$options = array(
+		'type' => 'object',
+		'limit' => 1,
+		'container_guid' => $reply->container_guid,
+		'relationship' => FORUM_REPLY_RELATIONSHIP, 
+		'relationship_guid' => $reply->guid, 
+		'inverse_relationship' => FALSE,
+	);
+
+	$entities = elgg_get_entities_from_relationship($options);
+	return $entities[0];
+}

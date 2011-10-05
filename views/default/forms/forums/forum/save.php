@@ -61,7 +61,7 @@ $submit_input = elgg_view('input/submit', array(
 // Build Form Body
 $form_body = <<<HTML
 
-<div class='margin_top'>
+<div>
 	<div>
 		<label>$title_label</label><br />
         $title_input

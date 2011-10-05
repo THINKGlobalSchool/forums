@@ -12,11 +12,14 @@
  * 	- tags?
  * 	- permissions
  *  - anonymous support
+ *  - clean up listings?
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
 
 function forums_init() {
+	// Relationship definitions
+	define('FORUM_REPLY_RELATIONSHIP', 'forum_reply_to');
 
 	// Register and load library
 	elgg_register_library('elgg:forums', elgg_get_plugins_path() . 'forums/lib/forums.php');
@@ -203,7 +206,20 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			}
 			break;
 		case 'forum_reply':
+			// Admin Only 
+			// @TODO Moderator
+			if (elgg_is_admin_logged_in()) {
+				$options = array(
+					'name' => 'edit',
+					'text' => elgg_echo('edit'),
+					'href' => elgg_get_site_url() . 'forums/reply/edit/' . $entity->guid,
+					'priority' => 2,
+				);
+				$return[] = ElggMenuItem::factory($options);
 
+				// Delete button
+				$return[] = ElggMenuItem::factory($delete_options);
+			}
 			break;
 	}
 

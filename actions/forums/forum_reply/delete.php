@@ -15,15 +15,17 @@ $guid = get_input('guid');
 
 $forum_reply = get_entity($guid);
 
+$topic = get_entity($forum_reply->topic_guid);
+
 if (elgg_instanceof($forum_reply, 'object', 'forum_reply')) {
 	// Delete 
 	if ($forum_reply->delete()) {
 		// Success
 		system_message(elgg_echo('forums:success:forum_reply:delete'));
-		forward('admin/forums/manage');
+		forward('forums/topic/view/' . $topic->guid);
 	} else {
 		// Error
 		register_error(elgg_echo('forums:error:forum_reply:delete'));
-		forward('admin/forums/manage');
+		forward(REFERER);
 	}
 }

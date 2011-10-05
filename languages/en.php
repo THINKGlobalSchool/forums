@@ -36,10 +36,13 @@ $english = array(
 	'forums:label:no' => 'No',
 	'forums:label:moderator_role' => 'Moderator Role',
 	'forums:label:notopics' => 'No topics have been created',
+	'forums:label:notopics' => 'No replies have been created',
 	'forums:label:newtopic' => 'New Topic',
 	'forums:label:body' => 'Body',
 	'forums:label:replyby' => '%s',
 	'forums:label:dateline' => 'posted %s', 
+	'forums:label:replytothis' => 'Reply to this',
+	'forums:label:replytotopic' => 'Reply to topic',
 
 	// River
 
@@ -54,6 +57,7 @@ $english = array(
 	'forums:error:forum_topic:delete' => 'There was an error deleting the topic',
 	'forums:error:forum_topic:save' => 'There was an error saving the topic',
 	'forums:error:forum_topic:edit' => 'There was an error editing the topic',
+	'forums:error:forum_topic:invalid' => 'There was an error editing the topic',
 	'forums:error:forum_reply:delete' => 'There was an error deleting the reply',
 	'forums:error:forum_reply:save' => 'There was an error saving the reply',
 	'forums:error:forum_reply:edit' => 'There was an error editing the reply', 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Forums Save Topic Form
+ * Forums Save Reply Form
  *
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -11,10 +11,10 @@
  */
 
 // Map values
-$title = elgg_extract('title', $vars, '');
 $guid = elgg_extract('guid', $vars);
 $description = elgg_extract('description', $vars, '');
-$container_guid = elgg_extract('container_guid', $vars);
+$topic_guid = elgg_extract('topic_guid', $vars);
+$reply_guid = elgg_extract('reply_guid', $vars);
 
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
@@ -23,14 +23,7 @@ if ($guid) {
 		'value' => $guid,
 	));
 	$entity = get_entity($guid);
-} 
-
-// Labels/Input
-$title_label = elgg_echo('title');
-$title_input = elgg_view('input/text', array(
-	'name' => 'title',
-	'value' => $title
-));
+}
 
 $body_label = elgg_echo('forums:label:body');
 $body_input = elgg_view('input/longtext', array(
@@ -38,9 +31,14 @@ $body_input = elgg_view('input/longtext', array(
 	'value' => $description
 ));
 
-$container_hidden = elgg_view('input/hidden', array(
-	'name' => 'container_guid',
-	'value' => $container_guid
+$topic_hidden = elgg_view('input/hidden', array(
+	'name' => 'topic_guid',
+	'value' => $topic_guid
+));
+
+$reply_hidden = elgg_view('input/hidden', array(
+	'name' => 'reply_guid',
+	'value' => $reply_guid
 ));
 
 $submit_input = elgg_view('input/submit', array(
@@ -53,17 +51,13 @@ $form_body = <<<HTML
 
 <div>
 	<div>
-		<label>$title_label</label><br />
-        $title_input
-	</div><br />
-	<div>
-		<label>$body_label</label><br />
         $body_input
 	</div><br />
 	<div class='elgg-foot'>
 		$submit_input
 		$entity_hidden
-		$container_hidden
+		$topic_hidden
+		$reply_hidden
 	</div>
 </div>
 HTML;
