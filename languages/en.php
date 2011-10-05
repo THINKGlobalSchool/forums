@@ -24,6 +24,8 @@ $english = array(
 
 	// Page titles 
 	'forums:title:allforums' => 'All Site Forums',
+	'forums:title:topics' => 'Topics in forum: %s',
+	'forums:title:topicedit' => 'Edit Topic',
 
 	// Labels
 	'forums:label:none' => 'No Forums',
@@ -33,6 +35,11 @@ $english = array(
 	'forums:label:yes' => 'Yes',
 	'forums:label:no' => 'No',
 	'forums:label:moderator_role' => 'Moderator Role',
+	'forums:label:notopics' => 'No topics have been created',
+	'forums:label:newtopic' => 'New Topic',
+	'forums:label:body' => 'Body',
+	'forums:label:replyby' => '%s',
+	'forums:label:dateline' => 'posted %s', 
 
 	// River
 
@@ -43,12 +50,13 @@ $english = array(
 	'forums:error:forum:delete' => 'There was an error deleting the forum',
 	'forums:error:forum:save' => 'There was an error saving the forum',
 	'forums:error:forum:edit' => 'There was an error editing the forum',
+	'forums:error:forum:invalid' => 'Invalid Forum',
 	'forums:error:forum_topic:delete' => 'There was an error deleting the topic',
 	'forums:error:forum_topic:save' => 'There was an error saving the topic',
 	'forums:error:forum_topic:edit' => 'There was an error editing the topic',
 	'forums:error:forum_reply:delete' => 'There was an error deleting the reply',
 	'forums:error:forum_reply:save' => 'There was an error saving the reply',
-	'forums:error:forum_reply:edit' => 'There was an error editing the reply',
+	'forums:error:forum_reply:edit' => 'There was an error editing the reply', 
 
 	'forums:success:forum:save' => 'Successfully saved forum',
 	'forums:success:forum:delete' => 'Successfully deleted the forum',

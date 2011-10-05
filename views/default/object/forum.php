@@ -16,15 +16,7 @@ if (!$forum) {
 	return '';
 }
 
-$owner = get_entity($forum->owner_guid);
-$owner_icon = elgg_view_entity_icon($owner, 'tiny');
-
-$owner_link = "<a href=\"{$owner->getURL()}\">{$owner->name}</a>";
-$author_text = elgg_echo('byline', array($owner_link));
 $linked_title = "<a href=\"{$forum->getURL()}\" title=\"" . htmlentities($forum->title) . "\">{$forum->title}</a>";
-$date = elgg_view_friendly_time($forum->time_updated);
-
-$subtitle = "$author_text $date";
 
 $metadata = elgg_view_menu('entity', array(
 	'entity' => $vars['entity'],
@@ -34,8 +26,44 @@ $metadata = elgg_view_menu('entity', array(
 ));
 
 if ($full_view) {
+	
+	$params = array(
+		'title' => FALSE,
+		'entity' => $forum,
+		'metadata' => $metadata,
+		'content' => "<div class='forum-description'>" . $forum->description  . "</div>",
+	);
+	
+	$body = elgg_view('object/elements/summary', $params);
+	$summary = elgg_view_image_block('', $body);
+	
+	$topics_title = elgg_echo('forums:title:topics', array($forum->title));
+	$topics_list = elgg_view('forums/topics', $vars);
+	
+	$topic_new = elgg_view('output/url', array(
+		'name' => 'forums-create-topic',
+		'id' => 'forums-create-topic',
+		'class' => 'elgg-button elgg-button-submit',
+		'href' => elgg_get_site_url() . 'forums/topic/add/' . $forum->guid,
+		'text' => elgg_echo('forums:label:newtopic'),
+	));
+	
 	echo <<<___HTML
-<div class="forum"></div>
+		<div class="forum">
+			$summary
+			<div class='forum-topics'>
+				<div class='forum-topics-header'>
+					<h4>$topics_title</h4>
+					<div class='forum-topics-controls'>
+						$topic_new
+					</div>
+					<div style='clear: both;'></div>
+				</div>
+				<div class='forum-topics-list'>
+					$topics_list
+				</div>
+			</div>
+		</div>
 ___HTML;
 
 } else {
@@ -43,10 +71,9 @@ ___HTML;
 	$params = array(
 		'entity' => $forum,
 		'metadata' => $metadata,
-		'subtitle' => $subtitle,
 		'content' => elgg_get_excerpt($forum->description),
 	);
 	
 	$body = elgg_view('object/elements/summary', $params);
-	echo elgg_view_image_block($owner_icon, $body);
+	echo elgg_view_image_block('', $body);
 }

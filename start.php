@@ -8,6 +8,10 @@
  * @copyright THINK Global School 2010
  * @link http://www.thinkglobalschool.com/
  * 
+ * @TODO
+ * 	- tags?
+ * 	- permissions
+ *  - anonymous support
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -25,6 +29,10 @@ function forums_init() {
 	// Register JS libraries
 	$f_js = elgg_get_simplecache_url('js', 'forums/forums');
 	elgg_register_js('elgg.forums', $f_js);
+
+	// Add main menu item
+	$item = new ElggMenuItem('forums', elgg_echo('forums'), 'forums/all');
+	elgg_register_menu_item('site', $item);
 
 	// Register page handler
 	elgg_register_page_handler('forums','forums_page_handler');
@@ -46,8 +54,8 @@ function forums_init() {
 	elgg_register_action('forums/forum_topic/save', "$action_base/forum_topic/save.php");
 	elgg_register_action('forums/forum_reply/save', "$action_base/forum_reply/save.php");
 	elgg_register_action('forums/forum/delete', "$action_base/forum/delete.php", 'admin');
-	elgg_register_action('forums/forum_topic/save', "$action_base/forum_topic/delete.php");
-	elgg_register_action('forums/forum_reply/save', "$action_base/forum_reply/delete.php");
+	elgg_register_action('forums/forum_topic/delete', "$action_base/forum_topic/delete.php");
+	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
 
 	return TRUE;
 }
@@ -57,6 +65,7 @@ function forums_init() {
  */
 function forums_page_handler($page) {
 	gatekeeper(); // Logged in only
+	elgg_load_css('elgg.forums');
 	
 	elgg_push_breadcrumb(elgg_echo('forums'), elgg_get_site_url() . "forums/all");	
 	
@@ -68,12 +77,29 @@ function forums_page_handler($page) {
 		default: 
 			$params = forums_get_page_content_list();
 			break;
+		case 'topic':
+			// Handle topics
+			switch ($page[1]) {
+				case 'add':
+					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
+					break;
+				case 'edit':
+					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
+					break;
+				case 'view':
+					$params = forums_get_page_content_view($page[2]);
+					break;
+				default:
+					forward('forums/all');
+					break;
+			}
+			break;
 	}
 	
 	// Custom sidebar (none at the moment)
 	$params['sidebar'] .= elgg_view('todo/sidebar');
 
-	$body = elgg_view_layout('content', $params);
+	$body = elgg_view_layout($params['layout'] ? $params['layout'] : 'content', $params);
 
 	echo elgg_view_page($params['title'], $body);
 	
@@ -97,7 +123,7 @@ function forum_url($entity) {
  * @return string request url
  */
 function forum_topic_url($entity) {
-	return elgg_get_site_url() . 'forums/viewtopic/' . $entity->guid;
+	return elgg_get_site_url() . 'forums/topic/view/' . $entity->guid;
 }
 
 /**
@@ -125,33 +151,63 @@ function forums_submenus() {
 function forums_setup_entity_menu($hook, $type, $return, $params) {
 	$entity = $params['entity'];
 
-	if (!elgg_instanceof($entity, 'object', 'forum')) {
+	// Only handling forum related entities
+	if (!elgg_instanceof($entity, 'object', 'forum') 
+		&& !elgg_instanceof($entity, 'object', 'forum_topic') 
+		&& !elgg_instanceof($entity, 'object', 'forum_reply')) {
 		return $return;
 	}
 
 	$return = array();
+	
+	// Generic delete button (Works with all handlers)
+	$delete_options = array(
+		'name' => 'delete',
+		'text' => elgg_view_icon('delete'),
+		'title' => elgg_echo('delete:this'),
+		'href' => "action/{$params['handler']}/delete?guid={$entity->getGUID()}",
+		'confirm' => elgg_echo('deleteconfirm'),
+		'priority' => 3,
+	);
 
-	// Admin Only
-	if (elgg_is_admin_logged_in()) {
-		$options = array(
-			'name' => 'edit',
-			'text' => elgg_echo('edit'),
-			'href' => elgg_get_site_url() . 'admin/forums/edit?guid=' . $entity->guid,
-			'priority' => 2,
-		);
-		$return[] = ElggMenuItem::factory($options);
+	switch($entity->getSubtype()) {
+		case 'forum':
+			// Admin Only 
+			if (elgg_is_admin_logged_in()) {
+				$options = array(
+					'name' => 'edit',
+					'text' => elgg_echo('edit'),
+					'href' => elgg_get_site_url() . 'admin/forums/edit?guid=' . $entity->guid,
+					'priority' => 2,
+				);
+				$return[] = ElggMenuItem::factory($options);
+				
+				// Delete button
+				$return[] = ElggMenuItem::factory($delete_options);
+			}
+			break;
+		case 'forum_topic':
+			// Admin Only 
+			// @TODO Moderator
+			if (elgg_is_admin_logged_in()) {
+				$options = array(
+					'name' => 'edit',
+					'text' => elgg_echo('edit'),
+					'href' => elgg_get_site_url() . 'forums/topic/edit/' . $entity->guid,
+					'priority' => 2,
+				);
+				$return[] = ElggMenuItem::factory($options);
 
-		$options = array(
-			'name' => 'delete',
-			'text' => elgg_view_icon('delete'),
-			'title' => elgg_echo('delete:this'),
-			'href' => "action/{$params['handler']}/delete?guid={$entity->getGUID()}",
-			'confirm' => elgg_echo('deleteconfirm'),
-			'priority' => 3,
-		);
+				// Delete button
+				$return[] = ElggMenuItem::factory($delete_options);
+			}
+			break;
+		case 'forum_reply':
 
-		$return[] = ElggMenuItem::factory($options);
+			break;
 	}
+
+	
 
 	return $return;
 }

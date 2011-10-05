@@ -19,15 +19,27 @@ function forums_get_page_content_view($guid) {
 	$params = array(
 		'filter' => '',
 		'header' => '',
+		'layout' => 'one_column',
 	);
-
+	
 	if (elgg_entity_exists($guid)) {
 		$entity = get_entity($guid);
-		if (elgg_instanceof($entity, 'object', 'forum')) {
-			$owner = $entity->getOwnerEntity();
+		if (elgg_instanceof($entity, 'object', 'forum')
+			|| elgg_instanceof($entity, 'object', 'forum_topic')
+			|| elgg_instanceof($entity, 'object', 'forum_reply')) 
+		{
 			$params['title'] = $entity->title;
 			$params['content'] = elgg_view_entity($entity, array('full_view' => TRUE));
+			
+			if ($entity->getSubtype() == 'forum') {
+				
+			} else if ($entity->getSubtype() == 'forum_topic') {
+				$forum = $entity->getContainerEntity();
+				elgg_push_breadcrumb($forum->title, $forum->getURL());
+			}
+			
 			elgg_push_breadcrumb($entity->title);
+
 			return $params;
 		} else {
 			// Most likely a permission issue here
@@ -70,6 +82,58 @@ function forums_get_page_content_list() {
 	return $params;
 }
 
+/**
+ * Get page content to edit/create a forum topic
+ * 
+ * @param string $page_type Add/Edit
+ * @param int    $guid      Forum/Topic guid
+ */
+function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
+	
+	$params = array(
+		'filter' => '',
+	);
+	
+	// Form vars
+	$vars = array();
+	$vars['id'] = 'forum-topic-edit-form';
+	$vars['name'] = 'forum-topic-edit-form';
+	
+	if ($page_type == 'edit') {
+		// Editing
+		$title = elgg_echo('forums:title:topicedit');
+		if (elgg_entity_exists($guid) && elgg_instanceof($topic = get_entity($guid), 'object', 'forum_topic')) {
+			$title .= ": \"$topic->title\"";
+			$body_vars = forums_prepare_topic_form_vars($topic);
+			$content = elgg_view_form('forums/forum_topic/save', $vars, $body_vars);
+			$forum = $topic->getContainerEntity();
+			elgg_push_breadcrumb($forum->title, $forum->getURL());
+			elgg_push_breadcrumb($topic->title, $topic->getURL());
+			elgg_push_breadcrumb(elgg_echo('edit'));
+		} else {
+			$content = elgg_echo('forums:error:forum_topic:edit');
+		}
+	} else {
+		// Adding
+		$title = elgg_echo('forums:label:newtopic');
+		
+		// Check for valid forum container
+		if (elgg_entity_exists($guid) && elgg_instanceof($forum = get_entity($guid), 'object', 'forum')) {
+			elgg_push_breadcrumb($forum->title, $forum->getURL());
+			elgg_push_breadcrumb($title);
+			$title = $forum->title . ": " . $title;
+			$body_vars = forums_prepare_topic_form_vars(NULL, $forum->guid);
+			$content = elgg_view_form('forums/forum_topic/save', $vars, $body_vars);
+		} else {
+			$content = elgg_echo('forums:error:forum:invalid');
+		}		
+	}
+	
+	$params['content'] = $content;
+	$params['title'] = $title;
+	return $params;
+}
+
 /** Prepare forum form vars */
 function forums_prepare_forum_form_vars($forum) {
 	// input names => defaults
@@ -94,6 +158,33 @@ function forums_prepare_forum_form_vars($forum) {
 	}
 
 	elgg_clear_sticky_form('forum-edit-form');
+
+	return $values;
+}
+
+/** Prepare topic form vars */
+function forums_prepare_topic_form_vars($topic, $container_guid = '') {
+	// input names => defaults
+	$values = array(
+		'title' => '',
+		'description' => '',
+		'container_guid' => $container_guid,
+		'guid' => '',
+	);
+
+	if ($topic) {
+		foreach (array_keys($values) as $field) {
+			$values[$field] = $topic->$field;
+		}
+	}
+
+	if (elgg_is_sticky_form('forum-topic-edit-form')) {
+		foreach (array_keys($values) as $field) {
+			$values[$field] = elgg_get_sticky_value('forum-topic-edit-form', $field);
+		}
+	}
+
+	elgg_clear_sticky_form('forum-topic-edit-form');
 
 	return $values;
 }
