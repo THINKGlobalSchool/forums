@@ -26,6 +26,7 @@ $english = array(
 	'forums:title:allforums' => 'All Site Forums',
 	'forums:title:topics' => 'Topics in forum: %s',
 	'forums:title:topicedit' => 'Edit Topic',
+	'forums:title:replyedit' => 'Edit reply',
 
 	// Labels
 	'forums:label:none' => 'No Forums',
@@ -43,6 +44,7 @@ $english = array(
 	'forums:label:dateline' => 'posted %s', 
 	'forums:label:replytothis' => 'Reply to this',
 	'forums:label:replytotopic' => 'Reply to topic',
+	'forums:label:totopic' => '&nbsp;to topic: %s',
 
 	// River
 

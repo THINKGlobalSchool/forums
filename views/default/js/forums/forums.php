@@ -15,8 +15,9 @@ elgg.provide('elgg.forums');
 
 // Init function
 elgg.forums.init = function() {
-	console.log('forums initted');
+	console.log('forums loaded');
 }
+
 
 elgg.register_hook_handler('init', 'system', elgg.forums.init);
 //</script>
