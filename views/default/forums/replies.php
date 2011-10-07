@@ -20,6 +20,7 @@ $options = array(
 	'relationship' => FORUM_REPLY_RELATIONSHIP, 
 	'relationship_guid' => $vars['entity']->guid, 
 	'inverse_relationship' => TRUE,
+	'order_by' => 'e.time_created asc',
 );
 
 $list = elgg_list_entities_from_relationship($options);

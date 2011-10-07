@@ -18,8 +18,21 @@ $forum_topic = get_entity($guid);
 $forum = $forum_topic->getContainerEntity();
 
 if (elgg_instanceof($forum_topic, 'object', 'forum_topic')) {
-	// Delete 
-	if ($forum_topic->delete()) {
+
+	// Grab topic replies
+	$replies = forums_get_topic_replies($forum_topic, array(
+		'limit' => 0,
+	));
+
+	$success = TRUE;
+
+	// Delete replies
+	foreach($replies as $reply) {
+		$success &= $reply->delete();
+	}
+
+	// Delete topic
+	if ($success && $forum_topic->delete()) {
 		// Success
 		system_message(elgg_echo('forums:success:forum_topic:delete'));
 		forward('forums/view/' . $forum->guid);

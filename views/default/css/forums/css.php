@@ -46,6 +46,12 @@
 	margin: 5px 0px;
 }
 
+.forum-topic {
+}
+
+.forum-reply {
+}
+
 .forum-topic .forum-reply-icon {
 	margin-right: 5px;
 	vertical-align: middle;
@@ -68,6 +74,10 @@
 	font-size: 11px;
 }
 
+.forum-topic .reply-to-reply {
+	float: right;
+}
+
 .forum-topic .forum-reply-button .elgg-icon {
 	vertical-align: middle;
 }
@@ -76,32 +86,45 @@
 	text-decoration: none;
 }
 
+.forum-reply-edit-form {
+	margin: 8px 0;
+	display: none;
+}
+
+/** Elgg overrides **/
+
+.forum-topic .elgg-list, .forum-topic .elgg-list > li {
+	border: none !important;
+}
+
 .forum-topic .elgg-menu {
 	text-transform: none;
 }
 
-/** Forum reply module **/
-.elgg-module-forumreply {
-	background-color: white;
-	border: 1px solid #ccc;
-	
-	margin-bottom: 0;
-	padding: 5px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	
-	-webkit-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
-	box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
-}
-.elgg-module-forumreply > .elgg-head {
-	margin-bottom: 5px;
-	padding-bottom: 5px;
-	border-bottom: 1px solid #ccc;
+/** Forum reply indent **/
+.forum-reply ul {
+	margin-left: 20px;
 }
 
-.forum-reply-edit-form {
-	margin: 8px 0;
-	display: none;
+/** Forum reply module **/
+
+.forum-reply-module {
+	margin-bottom: 5px;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+
+.forum-reply-module > .elgg-body {
+	border-left: 6px solid #CCC;
+}
+
+.forum-reply-module > .elgg-head {
+    background-color: #666;
+    padding: 4px 1px 0px 4px;
+}
+
+.forum-reply-module > .elgg-head * {
+	text-transform: none;
+	font-size: 13px;
 }

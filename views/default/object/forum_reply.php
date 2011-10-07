@@ -54,9 +54,9 @@ if ($full) {
 	$content .= elgg_view('output/url', array(
 		'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytothis"), 
 		'href' => '#forum-reply-edit-form-' . $reply->guid,
-		'class' => 'forum-reply-button',
+		'class' => 'forum-reply-button reply-to-reply',
 		'rel' => 'toggle',
-	));
+	)) . "<div style='clear: both;'></div>";
 
 	// Reply form vars
 	$form_vars = array(
@@ -69,8 +69,13 @@ if ($full) {
 
 	$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
 
-	$content = elgg_view_module('forumreply', $title, $content);
+	$content = elgg_view_module('featured', $title, $content, array(
+		'class' => 'forum-reply-module',
+		'id' => 'forum-reply-' . $reply->guid,
+	));
+
 	$replies = elgg_view('forums/replies', $vars);
+
 	echo <<<HTML
 	<div class='forum-reply'>
 		$content

@@ -15,11 +15,12 @@
  * @param int $guid		Object guid
  */
 function forums_get_page_content_view($guid) {
+	// Even though the forums are created by an admin, we want the page owner to be the logged in user
+	elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
 	
 	$params = array(
 		'filter' => '',
-		'header' => '',
-		'layout' => 'one_column',
+		//'layout' => 'one_column',
 	);
 	
 	if (elgg_entity_exists($guid)) {
@@ -58,10 +59,9 @@ function forums_get_page_content_view($guid) {
  * @return array
  */
 function forums_get_page_content_list() {
-	
 	$params = array(
 		'filter' => '',
-		'header' => '',
+		//'header' => '',
 	);
 
 	$options = array(
@@ -89,7 +89,7 @@ function forums_get_page_content_list() {
  * @param int    $guid      Forum/Topic guid
  */
 function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
-	
+
 	$params = array(
 		'filter' => '',
 	);
@@ -126,9 +126,44 @@ function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
 			$content = elgg_view_form('forums/forum_topic/save', $vars, $body_vars);
 		} else {
 			$content = elgg_echo('forums:error:forum:invalid');
-		}		
+		}
 	}
 	
+	$params['content'] = $content;
+	$params['title'] = $title;
+	return $params;
+}
+
+/**
+ * Get page content to edit forum reply
+ *
+ * @param string $page_type Add/Edit
+ * @param int    $guid      Forum/Topic guid
+ */
+function forums_get_page_content_reply_edit($guid = NULL) {
+	$params = array(
+		'filter' => '',
+	);
+
+	// Form vars
+	$vars = array();
+	$vars['id'] = 'forum-reply-edit-form';
+	$vars['name'] = 'forum-reply-edit-form';
+
+	$title = elgg_echo('forums:title:replyedit');
+	if (elgg_entity_exists($guid) && elgg_instanceof($reply = get_entity($guid), 'object', 'forum_reply')) {
+		$topic = get_entity($reply->topic_guid);
+		$title .= elgg_echo('forums:label:totopic', array($topic->title));
+		$body_vars = forums_prepare_reply_form_vars($reply, $topic->guid);
+		$content = elgg_view_form('forums/forum_reply/save', $vars, $body_vars);
+		$forum = $topic->getContainerEntity();
+		elgg_push_breadcrumb($forum->title, $forum->getURL());
+		elgg_push_breadcrumb($topic->title, $topic->getURL());
+		elgg_push_breadcrumb(elgg_echo('forums:title:replyedit'));
+	} else {
+		$content = elgg_echo('forums:error:forum_reply:edit');
+	}
+
 	$params['content'] = $content;
 	$params['title'] = $title;
 	return $params;
@@ -214,6 +249,44 @@ function forums_prepare_reply_form_vars($reply, $topic_guid, $reply_guid = NULL)
 	elgg_clear_sticky_form('forum-topic-edit-form');
 
 	return $values;
+}
+
+
+/**
+ * Get all replies for given topic
+ *
+ * @param ElggEntity $topic  the topic
+ * @param array      $options param array
+ *
+ * 'limit'   =>  Limit to retrieve
+ * 'offset'  =>  Offset to grab
+ * 'count'   =>  How many to grab
+ *
+ * @return array
+ */
+function forums_get_topic_replies($topic, array $options = array()) {
+	if (!elgg_instanceof($topic, 'object', 'forum_topic')) {
+		return false;
+	}
+
+	$defaults = array(
+		'limit' => 10,
+		'offset' => 0,
+		'count' => FALSE,
+	);
+
+	$options = array_merge($defaults, $options);
+
+	// Perm options
+	$options['type'] = 'object';
+	$options['subtype'] = 'forum_reply';
+	$options['container_guid'] = $topic->container_guid;
+	$options['metadata_name'] = 'topic_guid';
+	$options['metadata_value'] = $topic->guid;
+
+	$replies = elgg_get_entities_from_metadata($options);
+
+	return $replies;
 }
 
 /**

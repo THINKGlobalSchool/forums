@@ -13,6 +13,7 @@
  * 	- permissions
  *  - anonymous support
  *  - clean up listings?
+ *  - forum delete should delete all topics and replies
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -46,6 +47,9 @@ function forums_init() {
 	// Item entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'forums_setup_entity_menu', 999);
 
+	// Write permissions handler
+	elgg_register_plugin_hook_handler('permissions_check', 'object', 'forums_write_permission_check');
+
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
 	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
@@ -69,6 +73,7 @@ function forums_init() {
 function forums_page_handler($page) {
 	gatekeeper(); // Logged in only
 	elgg_load_css('elgg.forums');
+	elgg_load_js('elgg.forums');
 	
 	elgg_push_breadcrumb(elgg_echo('forums'), elgg_get_site_url() . "forums/all");	
 	
@@ -88,6 +93,20 @@ function forums_page_handler($page) {
 					break;
 				case 'edit':
 					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
+					break;
+				case 'view':
+					$params = forums_get_page_content_view($page[2]);
+					break;
+				default:
+					forward('forums/all');
+					break;
+			}
+			break;
+		case 'reply':
+			// Handle topics
+			switch ($page[1]) {
+				case 'edit':
+					$params = forums_get_page_content_reply_edit($page[2]);
 					break;
 				case 'view':
 					$params = forums_get_page_content_view($page[2]);
@@ -228,4 +247,29 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 	return $return;
 }
 
+/**
+ * Extend permissions checking to extend can-edit for write users.
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $entity_type
+ * @param unknown_type $returnvalue
+ * @param unknown_type $params
+ */
+function forums_write_permission_check($hook, $entity_type, $returnvalue, $params)
+{
+	if ($params['entity']->getSubtype() == 'forum'
+		|| $params['entity']->getSubtype() == 'forum_topic') { // @TODO should be both? Maybe just the forum
+
+		$write_permission = $params['entity']->access_id;
+		$user = $params['user'];
+
+		if (($write_permission) && ($user)) {
+			$list = get_access_array($user->guid);
+
+			if (($write_permission != 0) && (in_array($write_permission,$list))) {
+				return true;
+			}
+		}
+	}
+}
 
