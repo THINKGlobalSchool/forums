@@ -37,7 +37,7 @@ $english = array(
 	'forums:label:no' => 'No',
 	'forums:label:moderator_role' => 'Moderator Role',
 	'forums:label:notopics' => 'No topics have been created',
-	'forums:label:notopics' => 'No replies have been created',
+	'forums:label:noreplies' => 'No replies have been created',
 	'forums:label:newtopic' => 'New Topic',
 	'forums:label:body' => 'Body',
 	'forums:label:replyby' => '%s',
@@ -45,6 +45,7 @@ $english = array(
 	'forums:label:replytothis' => 'Reply to this',
 	'forums:label:replytotopic' => 'Reply to topic',
 	'forums:label:totopic' => '&nbsp;to topic: %s',
+	'forums:label:moderatedby' => 'Moderated by: %s',
 
 	// River
 

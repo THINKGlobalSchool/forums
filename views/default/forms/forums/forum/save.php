@@ -51,7 +51,11 @@ $anonymous_input = elgg_view('input/dropdown', array(
 ));
 
 $roles_label = elgg_echo('forums:label:moderator_role');
-$roles_input = elgg_view('input/roledropdown', array('entity' => $item));
+$roles_input = elgg_view('input/roledropdown', array(
+	'name' => 'moderator_role',
+	'id' => 'moderator-role',
+	'value' => $moderator_role,
+));
 
 $submit_input = elgg_view('input/submit', array(
 	'name' => 'submit',
