@@ -43,6 +43,9 @@ function forums_init() {
 
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
+	
+	// Register a handler for deleting topics
+	elgg_register_event_handler('delete', 'object', 'forums_topic_delete_event_listener');
 
 	// Item entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'forums_setup_entity_menu', 999);
@@ -245,6 +248,24 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 	
 
 	return $return;
+}
+
+/**
+ * Topic deleted, so remove all replies
+ */
+function forums_topic_delete_event_listener($event, $object_type, $object) {
+	if (elgg_instanceof($object, 'object', 'forum_topic')) {
+		// Grab topic replies
+		$replies = forums_get_topic_replies($object, array(
+			'limit' => 0,
+		));
+
+		// Delete replies
+		foreach($replies as $reply) {
+			$reply->delete();
+		}
+	}
+	return TRUE;
 }
 
 /**

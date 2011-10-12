@@ -67,12 +67,20 @@ if ($full_view) {
 ___HTML;
 
 } else {
+	// Display moderator role if in admin context
+	if (elgg_get_context() == 'admin') {
+		$role = get_entity($forum->moderator_role);
+		$subtitle = elgg_echo('forums:label:moderatedby', array($role->title));
+	}
 
 	$params = array(
 		'entity' => $forum,
 		'metadata' => $metadata,
 		'content' => elgg_get_excerpt($forum->description),
+		'subtitle' => $subtitle,
 	);
+	
+
 	
 	$body = elgg_view('object/elements/summary', $params);
 	echo elgg_view_image_block('', $body);
