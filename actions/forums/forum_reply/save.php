@@ -57,7 +57,7 @@ if (!$reply->save()) {
 	forward(REFERER);
 }
 
-// Add relationship (on create only)
+// Add relationship and river entry(on create only)
 if (!$guid) {
 	// Get the entity that this object is in reply too
 	$reply_to = get_entity($reply_guid);
@@ -68,6 +68,11 @@ if (!$guid) {
 
 	// This states that: 'reply' is a forum_reply_to 'reply/topic' 
 	add_entity_relationship($reply->guid, FORUM_REPLY_RELATIONSHIP, $reply_to->guid);
+
+	// Add river entry if we're posting in an anonymous forum
+	if (!$reply->getContainerEntity()->anonymous) {
+		add_to_river('river/object/forum_reply/create', 'create', elgg_get_logged_in_user_guid(), $reply->guid);
+	}
 }
 
 // Clear Sticky form
