@@ -126,9 +126,6 @@ function forums_page_handler($page) {
 				case 'edit':
 					$params = forums_get_page_content_reply_edit($page[2]);
 					break;
-				case 'view':
-					$params = forums_get_page_content_view($page[2]);
-					break;
 				default:
 					forward('forums/all');
 					break;
@@ -191,12 +188,27 @@ function forums_submenus() {
 function forums_setup_entity_menu($hook, $type, $return, $params) {
 	$entity = $params['entity'];
 
-	foreach($return as $idx => $item) {
-		if ($item->getName() == 'likes' || $item->getName() == 'access') {
-			unset($return[$idx]);
+	if ($entity->getSubtype() == 'forum'
+		|| $entity->getSubtype() == 'forum_topic'
+		|| $entity->getSubtype() == 'forum_reply')
+	{
+		foreach($return as $idx => $item) {
+			if ($item->getName() == 'likes' || $item->getName() == 'access') {
+				unset($return[$idx]);
+			}
 		}
 	}
-	
+
+	// Add anonymous label
+	if ($entity->getSubtype() == 'forum' && $entity->anonymous) {
+		$options = array(
+			'name' => "anonymous_forum",
+			'text' =>  elgg_echo('forums:label:anonymous'),
+			'href' => FALSE,
+			'priority' => 1,
+		);
+		$return[] = ElggMenuItem::factory($options);
+	}
 
 	return $return;
 }

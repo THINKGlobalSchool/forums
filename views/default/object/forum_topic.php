@@ -37,7 +37,7 @@ if (elgg_in_context('widgets')) {
 
 if ($full) {
 	$content = elgg_view('forums/replies', $vars);
-	
+
 	$content .= elgg_view('output/url', array(
 		'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytotopic"), 
 		'href' => '#forum-reply-edit-form-' . $topic->guid,
@@ -64,14 +64,23 @@ HTML;
 
 } else {
 	// brief view
-	$owner_link = elgg_view('output/url', array(
-		'href' => "blog/owner/$owner->username",
-		'text' => $owner->name,
-	));
-	
-	$author_text = elgg_echo('byline', array($owner_link));
-	$subtitle = "<p>$author_text $date</p>";
-	
+	$forum = $topic->getContainerEntity();
+
+	// If anonymous, display as such
+	if ($forum->anonymous) {
+		$subtitle = "<p>" . elgg_echo('forums:label:byanonymous') . " $date</p>";
+	} else {
+		$owner_link = elgg_view('output/url', array(
+			'href' => "blog/owner/$owner->username",
+			'text' => $owner->name,
+		));
+
+		$author_text = elgg_echo('byline', array($owner_link));
+		$subtitle = "<p>$author_text $date</p>";
+
+		$owner_icon = elgg_view_entity_icon($owner, 'tiny');
+	}
+
 	$params = array(
 		'entity' => $topic,
 		'metadata' => $metadata,
@@ -81,8 +90,6 @@ HTML;
 	);
 	$params = $params + $vars;
 	$body = elgg_view('object/elements/summary', $params);
-
-	$owner_icon = elgg_view_entity_icon($owner, 'tiny');
 
 	echo elgg_view_image_block($owner_icon, $body);
 }

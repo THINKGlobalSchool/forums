@@ -46,6 +46,8 @@ $english = array(
 	'forums:label:replytotopic' => 'Reply to topic',
 	'forums:label:totopic' => '&nbsp;to topic: %s',
 	'forums:label:moderatedby' => 'Moderated by: %s',
+	'forums:label:anonymous' => 'Anonymous',
+	'forums:label:byanonymous' => 'By anonymous',
 
 	// River
 
