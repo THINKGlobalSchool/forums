@@ -92,6 +92,17 @@ function forums_page_handler($page) {
 		default: 
 			$params = forums_get_page_content_list();
 			break;
+		case 'forum':
+			switch ($page[1]) {
+				case 'edit':
+					// @todo group stuff
+					forward('admin/forums/edit?guid=' . $page[2]);
+					break;
+				default:
+					forward('forums/all');
+					break;
+			}
+			break;
 		case 'forum_topic':
 			// Handle topics
 			switch ($page[1]) {
