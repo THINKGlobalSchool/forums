@@ -10,9 +10,6 @@
  * 
  * @TODO
  * 	- permissions
- *  - How to handle deleting a 'reply'
- *  - anonymous support
- *  - river entries (non-anonymous)
  *  - Group support
  *  - Clean up display of threads
  */
@@ -44,9 +41,12 @@ function forums_init() {
 
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
-	
+
 	// Register a handler for deleting topics
 	elgg_register_event_handler('delete', 'object', 'forums_topic_delete_event_listener');
+
+	// Register a handler for deleting replies
+	elgg_register_event_handler('delete', 'object', 'forums_reply_delete_event_listener');
 
 	// Item entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'forums_setup_entity_menu', 999);
@@ -222,6 +222,32 @@ function forums_topic_delete_event_listener($event, $object_type, $object) {
 		$replies = forums_get_topic_replies($object, array(
 			'limit' => 0,
 		));
+
+		// Delete replies
+		foreach($replies as $reply) {
+			$reply->delete();
+		}
+	}
+	return TRUE;
+}
+
+/**
+ * Reply deleted, so remove all replies
+ */
+function forums_reply_delete_event_listener($event, $object_type, $object) {
+	if (elgg_instanceof($object, 'object', 'forum_reply')) {
+		// Grab all replies to this reply, and delete
+		$options = array(
+			'type' => 'object',
+			'subtype' => 'forum_reply',
+			'limit' => 0,
+			'container_guid' => $object->container_guid,
+			'relationship' => FORUM_REPLY_RELATIONSHIP,
+			'relationship_guid' => $object->guid,
+			'inverse_relationship' => TRUE,
+		);
+
+		$replies = elgg_get_entities_from_relationship($options);
 
 		// Delete replies
 		foreach($replies as $reply) {

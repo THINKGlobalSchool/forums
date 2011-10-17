@@ -53,6 +53,8 @@ $english = array(
 	'forums:label:moderatormask' => 'Moderator Mask',
 
 	// River
+	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
+	'river:create:object:forum_topic' => '%s create a new topic titled %s in the forum %s',
 
 	// Messages
 	'forums:error:requiredfields' => 'One or more required fields are missing',
