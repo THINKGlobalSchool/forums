@@ -170,7 +170,7 @@ function forums_get_page_content_reply_edit($guid = NULL) {
 }
 
 /** Prepare forum form vars */
-function forums_prepare_forum_form_vars($forum) {
+function forums_prepare_forum_form_vars($forum = NULL) {
 	// input names => defaults
 	$values = array(
 		'title' => '',
@@ -198,7 +198,7 @@ function forums_prepare_forum_form_vars($forum) {
 }
 
 /** Prepare topic form vars */
-function forums_prepare_topic_form_vars($topic, $container_guid = '') {
+function forums_prepare_topic_form_vars($topic = NULL, $container_guid = '') {
 	// input names => defaults
 	$values = array(
 		'title' => '',
@@ -225,7 +225,7 @@ function forums_prepare_topic_form_vars($topic, $container_guid = '') {
 }
 
 /** Prepare reply form vars */
-function forums_prepare_reply_form_vars($reply, $topic_guid, $reply_guid = NULL) {
+function forums_prepare_reply_form_vars($reply = NULL, $topic_guid, $reply_guid = NULL) {
 	// input names => defaults
 	$values = array(
 		'description' => '',
