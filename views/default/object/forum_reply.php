@@ -81,18 +81,16 @@ if ($full) {
 	$body_vars = forums_prepare_reply_form_vars(NULL, $reply->topic_guid, $reply->guid);
 
 	$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
+	$content .= elgg_view('forums/replies', $vars);
 
 	$content = elgg_view_module('featured', $title, $content, array(
 		'class' => 'forum-reply-module',
 		'id' => 'forum-reply-' . $reply->guid,
 	));
 
-	$replies = elgg_view('forums/replies', $vars);
-
 	echo <<<HTML
 	<div class='forum-reply'>
 		$content
-		$replies
 	</div>
 HTML;
 } else {
