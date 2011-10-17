@@ -9,6 +9,7 @@
  * @link http://www.thinkglobalschool.com/
  * 
  */
+elgg_load_js('elgg.forums');
 
 $entity = get_entity(get_input('guid'));
 

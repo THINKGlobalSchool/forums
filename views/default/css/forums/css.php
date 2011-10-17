@@ -91,6 +91,11 @@
 	display: none;
 }
 
+.moderator_mask {
+	font-weight: bolder;
+	color: #333;
+}
+
 /** Elgg overrides **/
 
 .forum-topic .elgg-list, .forum-topic .elgg-list > li {

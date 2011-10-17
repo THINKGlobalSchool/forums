@@ -177,6 +177,7 @@ function forums_prepare_forum_form_vars($forum = NULL) {
 		'description' => '',
 		'anonymous' => '',
 		'moderator_role' => '',
+		'moderator_mask' => '',
 		'guid' => '',
 	);
 
