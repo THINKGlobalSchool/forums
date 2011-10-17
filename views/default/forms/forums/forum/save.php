@@ -15,7 +15,8 @@ $title = elgg_extract('title', $vars, '');
 $guid = elgg_extract('guid', $vars);
 $description = elgg_extract('description', $vars, '');
 $moderator_role = elgg_extract('moderator_role', $vars, '');
-$anonymous = elgg_extract('anonymous', $vars, false);
+$anonymous = elgg_extract('anonymous', $vars, FALSE);
+$moderator_mask = elgg_extract('moderator_mask', $vars, FALSE);
 
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
@@ -50,6 +51,18 @@ $anonymous_input = elgg_view('input/dropdown', array(
 	)
 ));
 
+if ($anonymous) {
+	$mask_display = 'visible';
+} else {
+	$mask_display = 'none';
+}
+
+$moderator_mask_label = elgg_echo('forums:label:moderatormask');
+$moderator_mask_input = elgg_view('input/text', array(
+	'name' => 'moderator_mask',
+	'value' => $moderator_mask,
+));
+
 $roles_label = elgg_echo('forums:label:moderator_role');
 $roles_input = elgg_view('input/roledropdown', array(
 	'name' => 'moderator_role',
@@ -78,6 +91,10 @@ $form_body = <<<HTML
 		<label>$anonymous_label</label>
         $anonymous_input
 	</div><br />
+	<div id='moderator-mask-container' style='display: $mask_display;'>
+		<label>$moderator_mask_label</label>
+		$moderator_mask_input<br /><br />
+	</div>
 	<div>
 		<label>$roles_label</label>
 		$roles_input

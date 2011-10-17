@@ -48,6 +48,9 @@ $english = array(
 	'forums:label:moderatedby' => 'Moderated by: %s',
 	'forums:label:anonymous' => 'Anonymous',
 	'forums:label:byanonymous' => 'By anonymous',
+	'forums:label:byline' => 'By %s',
+	'forums:label:bymask' => '%s',
+	'forums:label:moderatormask' => 'Moderator Mask',
 
 	// River
 

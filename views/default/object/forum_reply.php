@@ -42,7 +42,12 @@ if ($full) {
 
 	// If anonymous, display as such
 	if ($forum->anonymous) {
-		$owner_link = elgg_echo('forums:label:anonymous');
+		// If the owner is an admin or a member of the moderator role, display mask
+		if ($owner->isAdmin() || roles_is_member($forum->moderator_role, $owner->guid)) {
+			$owner_link = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+		} else {
+			$owner_link = elgg_echo('forums:label:anonymous');
+		}
 	} else {
 		$icon_url = $owner->getIconURL('topbar');
 		$owner_icon = "<img src=\"$icon_url\" alt=\"$owner->name\" title=\"$owner->name\" class='forum-reply-icon elgg-border-plain elgg-transition' />";
@@ -96,7 +101,15 @@ HTML;
 	
 	// If anonymous, display as such
 	if ($forum->anonymous) {
-		$subtitle = "<p>" . elgg_echo('forums:label:byanonymous') . " $date</p>";
+		// If the owner is an admin or a member of the moderator role, display mask
+		if ($owner->isAdmin() || roles_is_member($forum->moderator_role, $owner->guid)) {
+			$bymask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+			$owner_text = elgg_echo('forums:label:byline', array($bymask));
+		} else {
+			$owner_text = elgg_echo('forums:label:byanonymous');
+		}
+
+		$subtitle = "<p>$owner_text $date</p>";
 	} else {
 		$owner_link = elgg_view('output/url', array(
 			'href' => "blog/owner/$owner->username",

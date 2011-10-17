@@ -15,7 +15,14 @@ elgg.provide('elgg.forums');
 
 // Init function
 elgg.forums.init = function() {
-	console.log('forums loaded');
+	// Show the moderator mask input
+	$('select#anonymous').change(function() {
+		if($(this).val() == '1') {
+			$('#moderator-mask-container').show();
+		} else {
+			$('#moderator-mask-container').hide();
+		}
+	});
 }
 
 

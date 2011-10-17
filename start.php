@@ -12,7 +12,7 @@
  * 	- permissions
  *  - How to handle deleting a 'reply'
  *  - anonymous support
- *  - clean up listings?
+ *  - river entries (non-anonymous)
  *  - Group support
  *  - Clean up display of threads
  */

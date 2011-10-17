@@ -15,6 +15,7 @@ $title = get_input('title');
 $description = get_input ('description');
 $anonymous = get_input('anonymous');
 $moderator_role = get_input('moderator_role');
+$moderator_mask = get_input('moderator_mask', FALSE);
 $guid = get_input('guid');
 
 // Create Sticky form
@@ -43,6 +44,7 @@ $forum->title = $title;
 $forum->description = $description;
 $forum->anonymous = $anonymous;
 $forum->moderator_role = $moderator_role;
+$forum->moderator_mask = $moderator_mask;
 
 // Try saving
 if (!$forum->save()) {
