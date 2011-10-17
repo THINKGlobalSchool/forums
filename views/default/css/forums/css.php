@@ -117,13 +117,13 @@
 
 .forum-reply-module {
 	margin-bottom: 5px;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
+	-webkit-border-radius: 10px 3px 3px 3px;
+	-moz-border-radius: 10px 3px 3px 3px;
+	border-radius: 10px 3px 3px 3px;
 }
 
 .forum-reply-module > .elgg-body {
-	border-left: 6px solid #CCC;
+	/*border-left: 6px solid #CCC;*/
 	padding: 10px 1px 10px 10px;
 }
 
