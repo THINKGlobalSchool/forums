@@ -64,6 +64,7 @@
 
 .forum-topic .forum-reply-description {
 	margin-bottom: 5px;
+	padding-right: 10px;
 }
 
 .forum-topic .forum-reply-description .elgg-output {
@@ -76,6 +77,7 @@
 
 .forum-topic .reply-to-reply {
 	float: right;
+	margin-right: 10px;
 }
 
 .forum-topic .forum-reply-button .elgg-icon {
@@ -122,6 +124,7 @@
 
 .forum-reply-module > .elgg-body {
 	border-left: 6px solid #CCC;
+	padding: 10px 1px 10px 10px;
 }
 
 .forum-reply-module > .elgg-head {
