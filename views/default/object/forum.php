@@ -44,7 +44,7 @@ if ($full_view) {
 		'name' => 'forums-create-topic',
 		'id' => 'forums-create-topic',
 		'class' => 'elgg-button elgg-button-submit',
-		'href' => elgg_get_site_url() . 'forums/topic/add/' . $forum->guid,
+		'href' => elgg_get_site_url() . 'forums/forum_topic/add/' . $forum->guid,
 		'text' => elgg_echo('forums:label:newtopic'),
 	));
 	

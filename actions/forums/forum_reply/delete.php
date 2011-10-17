@@ -22,7 +22,7 @@ if (elgg_instanceof($forum_reply, 'object', 'forum_reply')) {
 	if ($forum_reply->delete()) {
 		// Success
 		system_message(elgg_echo('forums:success:forum_reply:delete'));
-		forward('forums/topic/view/' . $topic->guid);
+		forward('forums/forum_topic/view/' . $topic->guid);
 	} else {
 		// Error
 		register_error(elgg_echo('forums:error:forum_reply:delete'));
