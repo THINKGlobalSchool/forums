@@ -23,19 +23,26 @@ if ($guid) {
 		'value' => $guid,
 	));
 	$entity = get_entity($guid);
-} 
+} else {
+	$body_label = elgg_echo('forums:label:body');
+	$body_input = elgg_view('input/longtext', array(
+		'name' => 'description',
+		'value' => $description
+	));
+
+	$body = <<<HTML
+		<div>
+			<label>$body_label</label><br />
+        	$body_input
+		</div><br />
+HTML;
+}
 
 // Labels/Input
 $title_label = elgg_echo('title');
 $title_input = elgg_view('input/text', array(
 	'name' => 'title',
 	'value' => $title
-));
-
-$body_label = elgg_echo('forums:label:body');
-$body_input = elgg_view('input/longtext', array(
-	'name' => 'description',
-	'value' => $description
 ));
 
 $container_hidden = elgg_view('input/hidden', array(
@@ -56,10 +63,7 @@ $form_body = <<<HTML
 		<label>$title_label</label><br />
         $title_input
 	</div><br />
-	<div>
-		<label>$body_label</label><br />
-        $body_input
-	</div><br />
+	$body
 	<div class='elgg-foot'>
 		$submit_input
 		$entity_hidden

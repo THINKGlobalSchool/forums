@@ -9,11 +9,12 @@
  * @link http://www.thinkglobalschool.com/
  * 
  * @TODO
- * 	- tags?
  * 	- permissions
+ *  - How to handle deleting a 'reply'
  *  - anonymous support
  *  - clean up listings?
- *  - forum delete should delete all topics and replies
+ *  - Group support
+ *  - Clean up display of threads
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -50,8 +51,11 @@ function forums_init() {
 	// Item entity menu hook
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'forums_setup_entity_menu', 999);
 
-	// Write permissions handler
+	// Moderator permissions check
 	elgg_register_plugin_hook_handler('permissions_check', 'object', 'forums_write_permission_check');
+
+	// Forum permissions handler
+	elgg_register_plugin_hook_handler('container_permissions_check', 'object', 'forums_container_write_permission_check');
 
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
@@ -88,7 +92,7 @@ function forums_page_handler($page) {
 		default: 
 			$params = forums_get_page_content_list();
 			break;
-		case 'topic':
+		case 'forum_topic':
 			// Handle topics
 			switch ($page[1]) {
 				case 'add':
@@ -105,7 +109,7 @@ function forums_page_handler($page) {
 					break;
 			}
 			break;
-		case 'reply':
+		case 'forum_reply':
 			// Handle topics
 			switch ($page[1]) {
 				case 'edit':
@@ -148,7 +152,7 @@ function forum_url($entity) {
  * @return string request url
  */
 function forum_topic_url($entity) {
-	return elgg_get_site_url() . 'forums/topic/view/' . $entity->guid;
+	return elgg_get_site_url() . 'forums/forum_topic/view/' . $entity->guid;
 }
 
 /**
@@ -158,7 +162,7 @@ function forum_topic_url($entity) {
  * @return string request url
  */
 function forum_reply_url($entity) {
-	return elgg_get_site_url() . 'forums/viewreply/' . $entity->guid;
+	return elgg_get_site_url() . 'forums/forum_reply/view/' . $entity->guid;
 }
 
 /**
@@ -176,75 +180,11 @@ function forums_submenus() {
 function forums_setup_entity_menu($hook, $type, $return, $params) {
 	$entity = $params['entity'];
 
-	// Only handling forum related entities
-	if (!elgg_instanceof($entity, 'object', 'forum') 
-		&& !elgg_instanceof($entity, 'object', 'forum_topic') 
-		&& !elgg_instanceof($entity, 'object', 'forum_reply')) {
-		return $return;
+	foreach($return as $idx => $item) {
+		if ($item->getName() == 'likes' || $item->getName() == 'access') {
+			unset($return[$idx]);
+		}
 	}
-
-	$return = array();
-	
-	// Generic delete button (Works with all handlers)
-	$delete_options = array(
-		'name' => 'delete',
-		'text' => elgg_view_icon('delete'),
-		'title' => elgg_echo('delete:this'),
-		'href' => "action/{$params['handler']}/delete?guid={$entity->getGUID()}",
-		'confirm' => elgg_echo('deleteconfirm'),
-		'priority' => 3,
-	);
-
-	switch($entity->getSubtype()) {
-		case 'forum':
-			// Admin Only 
-			if (elgg_is_admin_logged_in()) {
-				$options = array(
-					'name' => 'edit',
-					'text' => elgg_echo('edit'),
-					'href' => elgg_get_site_url() . 'admin/forums/edit?guid=' . $entity->guid,
-					'priority' => 2,
-				);
-				$return[] = ElggMenuItem::factory($options);
-				
-				// Delete button
-				$return[] = ElggMenuItem::factory($delete_options);
-			}
-			break;
-		case 'forum_topic':
-			// Admin Only 
-			// @TODO Moderator
-			if (elgg_is_admin_logged_in()) {
-				$options = array(
-					'name' => 'edit',
-					'text' => elgg_echo('edit'),
-					'href' => elgg_get_site_url() . 'forums/topic/edit/' . $entity->guid,
-					'priority' => 2,
-				);
-				$return[] = ElggMenuItem::factory($options);
-
-				// Delete button
-				$return[] = ElggMenuItem::factory($delete_options);
-			}
-			break;
-		case 'forum_reply':
-			// Admin Only 
-			// @TODO Moderator
-			if (elgg_is_admin_logged_in()) {
-				$options = array(
-					'name' => 'edit',
-					'text' => elgg_echo('edit'),
-					'href' => elgg_get_site_url() . 'forums/reply/edit/' . $entity->guid,
-					'priority' => 2,
-				);
-				$return[] = ElggMenuItem::factory($options);
-
-				// Delete button
-				$return[] = ElggMenuItem::factory($delete_options);
-			}
-			break;
-	}
-
 	
 
 	return $return;
@@ -276,20 +216,29 @@ function forums_topic_delete_event_listener($event, $object_type, $object) {
  * @param unknown_type $returnvalue
  * @param unknown_type $params
  */
-function forums_write_permission_check($hook, $entity_type, $returnvalue, $params)
-{
-	if ($params['entity']->getSubtype() == 'forum'
-		|| $params['entity']->getSubtype() == 'forum_topic') { // @TODO should be both? Maybe just the forum
+function forums_container_write_permission_check($hook, $entity_type, $returnvalue, $params) {
+	if ($params['container']->getSubtype() == 'forum') {
+		return TRUE; // Anyone can write to forum containers
+	}
+}
 
-		$write_permission = $params['entity']->access_id;
-		$user = $params['user'];
+/**
+ * Extend permissions checking to extend can-edit for write users.
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $entity_type
+ * @param unknown_type $returnvalue
+ * @param unknown_type $params
+ */
+function forums_write_permission_check($hook, $entity_type, $returnvalue, $params) {
+	if ($params['entity']->getSubtype() == 'forum_topic'
+		|| $params['entity']->getSubtype() == 'forum_reply') {
 
-		if (($write_permission) && ($user)) {
-			$list = get_access_array($user->guid);
+		$forum = get_entity($params['entity']->container_guid);
 
-			if (($write_permission != 0) && (in_array($write_permission,$list))) {
-				return true;
-			}
+		// Check if member is part of the forum's moderator role
+		if (roles_is_member($forum->moderator_role, $params['user']->guid)) {
+			return TRUE;
 		}
 	}
 }

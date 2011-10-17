@@ -74,4 +74,4 @@ if (!$guid) {
 elgg_clear_sticky_form('forum-reply-edit-form');
 
 system_message(elgg_echo('forums:success:forum_reply:save'));
-forward(elgg_get_site_url() . 'forums/topic/view/' . $topic->guid . '/#forum-reply-' . $reply->guid);
+forward(elgg_get_site_url() . 'forums/forum_topic/view/' . $topic->guid . '/#forum-reply-' . $reply->guid);

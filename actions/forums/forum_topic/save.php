@@ -20,7 +20,7 @@ $guid = get_input('guid');
 elgg_make_sticky_form('forum-topic-edit-form');
 
 // Check inputs
-if (!$title || !$description) {
+if (!$title || (!$guid && !$description)) {
 	register_error(elgg_echo('forums:error:requiredfields'));
 	forward(REFERER);
 }
@@ -74,4 +74,4 @@ if (!$guid) {
 elgg_clear_sticky_form('forum-topic-edit-form');
 
 system_message(elgg_echo('forums:success:forum_topic:save'));
-forward(elgg_get_site_url() . 'forums/topic/view/' . $topic->guid);
+forward(elgg_get_site_url() . 'forums/forum_topic/view/' . $topic->guid);
