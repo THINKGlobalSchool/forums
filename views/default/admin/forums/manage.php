@@ -16,9 +16,11 @@ $options = array(
 	'limit' => 10,
 	'pagination' => TRUE,
 	'full_view' => FALSE,
+	'metadata_name' => 'site_forum',
+	'metadata_value' => TRUE,
 );
 
-$forums = elgg_list_entities($options);
+$forums = elgg_list_entities_from_metadata($options);
 
 if (!$forums) {
 	$forums = elgg_echo('forums:label:none');

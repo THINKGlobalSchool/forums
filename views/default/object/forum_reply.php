@@ -43,7 +43,7 @@ if ($full) {
 	// If anonymous, display as such
 	if ($forum->anonymous) {
 		// If the owner is an admin or a member of the moderator role, display mask
-		if ($owner->isAdmin() || roles_is_member($forum->moderator_role, $owner->guid)) {
+		if (forums_is_moderator($owner, $forum)) {
 			$owner_link = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
 		} else {
 			$owner_link = elgg_echo('forums:label:anonymous');
@@ -100,7 +100,7 @@ HTML;
 	// If anonymous, display as such
 	if ($forum->anonymous) {
 		// If the owner is an admin or a member of the moderator role, display mask
-		if ($owner->isAdmin() || roles_is_member($forum->moderator_role, $owner->guid)) {
+		if (forums_is_moderator($owner, $forum)) {
 			$bymask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
 			$owner_text = elgg_echo('forums:label:byline', array($bymask));
 		} else {

@@ -25,11 +25,17 @@ if (!$title || (!$guid && !$description)) {
 	forward(REFERER);
 }
 
-// New Forum
+$forum = get_entity($container_guid);
+if (!elgg_instanceof($forum, 'object', 'forum')) {
+	register_error(elgg_echo('forums:error:forum:invalid'));
+	forward(REFERER);
+}
+
+// New Topic
 if (!$guid) {
 	$topic = new ElggObject();
 	$topic->subtype = 'forum_topic';
-	$topic->access_id = ACCESS_LOGGED_IN;
+	$topic->access_id = $forum->access_id;
 	$topic->container_guid = $container_guid;
 } else { // Editing
 	$topic = get_entity($guid);

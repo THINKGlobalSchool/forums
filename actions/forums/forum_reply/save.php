@@ -35,7 +35,7 @@ if (!$description) {
 if (!$guid) {
 	$reply = new ElggObject();
 	$reply->subtype = 'forum_reply';
-	$reply->access_id = ACCESS_LOGGED_IN;
+	$reply->access_id = $topic->access_id;
 	$reply->topic_guid = $topic->guid;
 
 	// Set container guid to the topic's contaier guid (the forum)

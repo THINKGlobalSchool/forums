@@ -136,3 +136,15 @@
 	text-transform: none;
 	font-size: 13px;
 }
+
+.forum-reply-module .elgg-menu-item-edit {
+	margin-right: 15px;
+}
+
+.forum-reply-module .elgg-menu-item-delete {
+	margin-left: 0;
+}
+
+.forum-reply-module .forum-reply-icon {
+	margin-left: 3px;
+}

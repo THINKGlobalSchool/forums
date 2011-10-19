@@ -21,14 +21,19 @@ $english = array(
 	'admin:forums:manage' => 'Manage',
 	'admin:forums:add' => 'New Forum',
 	'admin:forums:edit' => 'Edit Forum',
+	'forums:add' => 'New Group Forum',
 
 	// Page titles 
 	'forums:title:allforums' => 'All Site Forums',
 	'forums:title:topics' => 'Topics in forum: %s',
 	'forums:title:topicedit' => 'Edit Topic',
 	'forums:title:replyedit' => 'Edit reply',
+	'forums:title:ownerforums' => '%s\'s Forums',
+	'forums:title:addforum' => 'New Forum',
+	'forums:title:editforum' => 'Edit Forum',
 
 	// Labels
+	'forums:label:siteforums' => 'Site Forums',
 	'forums:label:none' => 'No Forums',
 	'forums:label:current' => 'Current Forums',
 	'forums:label:new' => 'New Forum',
@@ -51,6 +56,7 @@ $english = array(
 	'forums:label:byline' => 'By %s',
 	'forums:label:bymask' => '%s',
 	'forums:label:moderatormask' => 'Moderator Mask',
+	'forums:label:groupforums' => 'Group forums',
 
 	// River
 	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
@@ -80,6 +86,7 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 
 	// Other content
+	'groups:enableforum' => 'Enable group forums',
 );
 
 add_translation('en',$english);
