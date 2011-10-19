@@ -17,6 +17,8 @@ $description = elgg_extract('description', $vars, '');
 $moderator_role = elgg_extract('moderator_role', $vars, '');
 $anonymous = elgg_extract('anonymous', $vars, FALSE);
 $moderator_mask = elgg_extract('moderator_mask', $vars, FALSE);
+$access_id = elgg_extract('access_id', $vars);
+$container_guid = elgg_extract('container_guid', $vars, elgg_get_page_owner_guid());
 
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
@@ -26,6 +28,11 @@ if ($guid) {
 	));
 	$entity = get_entity($guid);
 } 
+
+$container_hidden = elgg_view('input/hidden', array(
+	'name' => 'container_guid',
+	'value' => $container_guid
+));
 
 // Labels/Input
 $title_label = elgg_echo('title');
@@ -63,12 +70,31 @@ $moderator_mask_input = elgg_view('input/text', array(
 	'value' => $moderator_mask,
 ));
 
-$roles_label = elgg_echo('forums:label:moderator_role');
-$roles_input = elgg_view('input/roledropdown', array(
-	'name' => 'moderator_role',
-	'id' => 'moderator-role',
-	'value' => $moderator_role,
-));
+// If the container is a group, don't display the moderator role
+if (!elgg_instanceof($entity = get_entity($container_guid), 'group')) {
+	$roles_label = elgg_echo('forums:label:moderator_role');
+	$roles_input = elgg_view('input/roledropdown', array(
+		'name' => 'moderator_role',
+		'id' => 'moderator-role',
+		'value' => $moderator_role,
+	));
+} else {
+	$c = elgg_get_context();
+	elgg_set_context('group_forum_access');
+	$access_label = elgg_echo('access');
+	$access_input = elgg_view('input/access' , array(
+		'name' => 'access_id',
+		'value' => $access_id,
+	));
+	elgg_set_context($c);
+
+	$access = <<<HTML
+		<div>
+			<label>$access_label</label><br />
+			$access_input
+		</div><br />
+HTML;
+}
 
 $submit_input = elgg_view('input/submit', array(
 	'name' => 'submit',
@@ -98,10 +124,12 @@ $form_body = <<<HTML
 	<div>
 		<label>$roles_label</label>
 		$roles_input
-	</div>
+	</div><br />
+	$access
 	<div class='elgg-foot'>
 		$submit_input
 		$entity_hidden
+		$container_hidden
 	</div>
 </div>
 HTML;

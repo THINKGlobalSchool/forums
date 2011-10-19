@@ -15,14 +15,11 @@
  * @param int $guid		Object guid
  */
 function forums_get_page_content_view($guid) {
-	// Even though the forums are created by an admin, we want the page owner to be the logged in user
-	elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
-	
 	$params = array(
 		'filter' => '',
 		//'layout' => 'one_column',
 	);
-	
+
 	if (elgg_entity_exists($guid)) {
 		$entity = get_entity($guid);
 		if (elgg_instanceof($entity, 'object', 'forum')
@@ -33,12 +30,25 @@ function forums_get_page_content_view($guid) {
 			$params['content'] = elgg_view_entity($entity, array('full_view' => TRUE));
 			
 			if ($entity->getSubtype() == 'forum') {
-				
+				$container = $entity->getContainerEntity();
 			} else if ($entity->getSubtype() == 'forum_topic') {
 				$forum = $entity->getContainerEntity();
-				elgg_push_breadcrumb($forum->title, $forum->getURL());
+				$container = $forum->getContainerEntity();
 			}
 			
+			// We don't want to see the admin user's owner badge, unless the forum was created by a group
+			if (elgg_instanceof($container, 'group')) {
+				elgg_set_page_owner_guid($container->guid);
+				elgg_push_breadcrumb($container->name, "forums/group/{$container->guid}/all");
+			} else {
+				elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
+			}
+
+			// If we're looking at a topic, show the forum breadcrumb
+			if ($forum) {
+				elgg_push_breadcrumb($forum->title, $forum->getURL());
+			}
+
 			elgg_push_breadcrumb($entity->title);
 
 			return $params;
@@ -58,7 +68,7 @@ function forums_get_page_content_view($guid) {
  *
  * @return array
  */
-function forums_get_page_content_list() {
+function forums_get_page_content_list($container_guid = NULL) {
 	$params = array(
 		'filter' => '',
 		//'header' => '',
@@ -68,17 +78,82 @@ function forums_get_page_content_list() {
 		'type' => 'object',
 		'subtype' => 'forum',
 		'full_view' => FALSE,
+		'container_guid' => $container_guid,
 	);
 
-	$params['title'] = elgg_echo('forums:title:allforums');
+	// We have a container_guid check for group
+	if (elgg_instanceof($group = get_entity($container_guid), 'group')) {
+		elgg_push_breadcrumb($group->name);
 
-	$list = elgg_list_entities($options);
+		// Only show add forum button for the group owner or admins
+		if (elgg_is_admin_logged_in() || $group->getOwnerEntity() == elgg_get_logged_in_user_entity()) {
+			elgg_register_title_button();
+		}
+		$params['title'] = elgg_echo('forums:title:ownerforums', array($group->name));
+	} else {
+		$params['title'] = elgg_echo('forums:title:allforums');
+		$options['metadata_name'] = 'site_forum';
+		$options['metadata_value'] = TRUE;
+	}
+
+	$list = elgg_list_entities_from_metadata($options);
 	if (!$list) {
 		$params['content'] = elgg_echo('forums:label:none');
 	} else {
 		$params['content'] = $list;
 	}
 
+	return $params;
+}
+
+/**
+ * Get page content to edit/create a group forum
+ *
+ * @param string $page_type Add/Edit
+ * @param int    $guid      Forum/Container guid
+ */
+function forums_get_page_content_forum_edit($page_type, $guid = NULL) {
+
+	$params = array(
+		'filter' => '',
+	);
+
+	// Form vars
+	$vars = array();
+	$vars['id'] = 'forum-edit-form';
+	$vars['name'] = 'forum-edit-form';
+
+	if ($page_type == 'edit') {
+		// Editing
+		$title = elgg_echo('forums:title:editforum');
+		if (elgg_entity_exists($guid)) {
+			$forum = get_entity($guid);
+			$group = $forum->getContainerEntity();
+
+			$body_vars = forums_prepare_forum_form_vars($forum);
+
+			$content = elgg_view_form('forums/forum/save', $vars, $body_vars);
+
+			elgg_push_breadcrumb($group->name, "forums/group/{$group->guid}/all");
+			elgg_push_breadcrumb($forum->title, $forum->getURL());
+			elgg_push_breadcrumb(elgg_echo('edit'));
+		} else {
+			$content = elgg_echo('forums:error:forum:edit');
+		}
+	} else {
+		// Adding
+		$title = elgg_echo('forums:title:addforum');
+		$group = get_entity($guid);
+
+		elgg_push_breadcrumb($group->name, "forums/group/{$guid}/all");
+		elgg_push_breadcrumb(elgg_echo('new'));
+
+		$body_vars = forums_prepare_forum_form_vars();
+		$content = elgg_view_form('forums/forum/save', $vars, $body_vars);
+	}
+
+	$params['content'] = $content;
+	$params['title'] = $title;
 	return $params;
 }
 
@@ -104,9 +179,9 @@ function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
 		$title = elgg_echo('forums:title:topicedit');
 		if (elgg_entity_exists($guid) && elgg_instanceof($topic = get_entity($guid), 'object', 'forum_topic')) {
 			$title .= ": \"$topic->title\"";
-			$body_vars = forums_prepare_topic_form_vars($topic);
-			$content = elgg_view_form('forums/forum_topic/save', $vars, $body_vars);
 			$forum = $topic->getContainerEntity();
+			$body_vars = forums_prepare_topic_form_vars($topic, $forum->guid);
+			$content = elgg_view_form('forums/forum_topic/save', $vars, $body_vars);
 			elgg_push_breadcrumb($forum->title, $forum->getURL());
 			elgg_push_breadcrumb($topic->title, $topic->getURL());
 			elgg_push_breadcrumb(elgg_echo('edit'));
@@ -171,6 +246,11 @@ function forums_get_page_content_reply_edit($guid = NULL) {
 
 /** Prepare forum form vars */
 function forums_prepare_forum_form_vars($forum = NULL) {
+	// Might be creating forums from an admin page, so make sure we set container
+	if (!$container_guid = elgg_get_page_owner_guid()) {
+		$container_guid = elgg_get_logged_in_user_guid();
+	}
+
 	// input names => defaults
 	$values = array(
 		'title' => '',
@@ -179,6 +259,8 @@ function forums_prepare_forum_form_vars($forum = NULL) {
 		'moderator_role' => '',
 		'moderator_mask' => '',
 		'guid' => '',
+		'access_id' => ACCESS_LOGGED_IN,
+		'container_guid' => $container_guid,
 	);
 
 	if ($forum) {
@@ -308,4 +390,26 @@ function forums_get_reply_parent($reply) {
 
 	$entities = elgg_get_entities_from_relationship($options);
 	return $entities[0];
+}
+
+/**
+ * Convenience function to check if the given user counts as a moderator for
+ * a given forum
+ *
+ * @param  ElggUser   $user
+ * @param  ElggEntity $forum
+ * @return bool
+ */
+function forums_is_moderator($user, $forum) {
+	// Grab container to check for group
+	$container = $forum->getContainerEntity();
+
+	if ($user->isAdmin()
+		|| (elgg_instanceof($container, 'group') && $container->getOwnerEntity() == $user)
+		|| roles_is_member($forum->moderator_role, $user->guid))
+	{
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }

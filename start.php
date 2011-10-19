@@ -9,9 +9,8 @@
  * @link http://www.thinkglobalschool.com/
  * 
  * @TODO
- * 	- permissions
- *  - Group support
- *  - Clean up display of threads
+ * 	- permissions?
+ *  - set access_id of all replies and topics if forum access changes (group only?)
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -42,6 +41,12 @@ function forums_init() {
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
 
+	// add the group foruns tool option
+	add_group_tool_option('forums',elgg_echo('groups:enableforums'), TRUE);
+
+	// Profile block hook
+	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'forums_owner_block_menu');
+
 	// Register a handler for deleting topics
 	elgg_register_event_handler('delete', 'object', 'forums_topic_delete_event_listener');
 
@@ -57,6 +62,9 @@ function forums_init() {
 	// Forum permissions handler
 	elgg_register_plugin_hook_handler('container_permissions_check', 'object', 'forums_container_write_permission_check');
 
+	// Remove public from forum access array
+	elgg_register_plugin_hook_handler('access:collections:write', 'user', 'forums_access_id_handler');
+
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
 	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
@@ -64,10 +72,10 @@ function forums_init() {
 
 	// Register actions
 	$action_base = elgg_get_plugins_path() . 'forums/actions/forums';
-	elgg_register_action('forums/forum/save', "$action_base/forum/save.php", 'admin');
+	elgg_register_action('forums/forum/save', "$action_base/forum/save.php");
 	elgg_register_action('forums/forum_topic/save', "$action_base/forum_topic/save.php");
 	elgg_register_action('forums/forum_reply/save', "$action_base/forum_reply/save.php");
-	elgg_register_action('forums/forum/delete', "$action_base/forum/delete.php", 'admin');
+	elgg_register_action('forums/forum/delete', "$action_base/forum/delete.php");
 	elgg_register_action('forums/forum_topic/delete', "$action_base/forum_topic/delete.php");
 	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
 
@@ -82,9 +90,20 @@ function forums_page_handler($page) {
 	elgg_load_css('elgg.forums');
 	elgg_load_js('elgg.forums');
 	
-	elgg_push_breadcrumb(elgg_echo('forums'), elgg_get_site_url() . "forums/all");	
+	elgg_push_breadcrumb(elgg_echo('forums:label:siteforums'), elgg_get_site_url() . "forums/all");
 	
 	switch($page[0]) {
+		case 'add':
+			group_gatekeeper();
+			$guid = elgg_get_page_owner_guid();
+			if (elgg_instanceof($group = get_entity($guid), 'group')
+			&& (elgg_is_admin_logged_in() || $group->getOwnerEntity() == elgg_get_logged_in_user_entity())) {
+				$params = forums_get_page_content_forum_edit($page[0], $guid);
+			} else {
+				// Not a group, or no permission
+				forward('forums/all');
+			}
+			break;
 		case 'view':
 			$params = forums_get_page_content_view($page[1]);
 			break;
@@ -92,11 +111,20 @@ function forums_page_handler($page) {
 		default: 
 			$params = forums_get_page_content_list();
 			break;
+		case 'group':
+			group_gatekeeper();
+			$params = forums_get_page_content_list($page[1]);
+			break;
 		case 'forum':
 			switch ($page[1]) {
 				case 'edit':
-					// @todo group stuff
-					forward('admin/forums/edit?guid=' . $page[2]);
+					$forum = get_entity($page[2]);
+					if ($forum && elgg_instanceof($forum->getContainerEntity(), 'group')) {
+						elgg_set_page_owner_guid($forum->getContainerGUID());
+						$params = forums_get_page_content_forum_edit($page[1], $page[2]);
+					} else {
+						forward('admin/forums/edit?guid=' . $page[2]);
+					}
 					break;
 				default:
 					forward('forums/all');
@@ -187,14 +215,28 @@ function forums_submenus() {
  */
 function forums_setup_entity_menu($hook, $type, $return, $params) {
 	$entity = $params['entity'];
+	$subtype = $entity->getSubtype();
 
-	if ($entity->getSubtype() == 'forum'
-		|| $entity->getSubtype() == 'forum_topic'
-		|| $entity->getSubtype() == 'forum_reply')
-	{
+	if ($subtype == 'forum' || $subtype == 'forum_topic' || $subtype == 'forum_reply') {
 		foreach($return as $idx => $item) {
-			if ($item->getName() == 'likes' || $item->getName() == 'access') {
+			// Remove likes
+			if ($item->getName() == 'likes') {
 				unset($return[$idx]);
+			}
+
+			if (($subtype == 'forum_topic' || $subtype =='forum_reply') && $item->getName() == 'access') {
+				unset($return[$idx]);
+			}
+
+			// Remove delete button unless we're a group owner, moderator or admin
+			if ($subtype != 'forum' && $item->getName() == 'delete') {
+				$forum = $entity->getContainerEntity();
+				$container = $forum->getContainerEntity();
+
+				if (!forums_is_moderator(elgg_get_logged_in_user_entity(), $forum)) {
+					// Remove delete
+					unset($return[$idx]);
+				}
 			}
 		}
 	}
@@ -292,3 +334,38 @@ function forums_write_permission_check($hook, $entity_type, $returnvalue, $param
 	}
 }
 
+/**
+ * Plugin hook to add forums to the group profile block
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_owner_block_menu($hook, $type, $value, $params) {
+	if (elgg_instanceof($params['entity'], 'group')) {
+		if ($params['entity']->forums_enable == 'yes') {
+			$url = "forums/group/{$params['entity']->guid}/all";
+			$item = new ElggMenuItem('forums', elgg_echo('forums:label:groupforums'), $url);
+			$value[] = $item;
+		}
+	}
+	return $value;
+}
+
+/**
+ * Plugin hook to remove public access level from forums
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_access_id_handler($hook, $type, $value, $params) {
+	if (elgg_in_context('group_forum_access')) {
+		unset($value[ACCESS_PUBLIC]); // Remove public
+	}
+	return $value;
+}
