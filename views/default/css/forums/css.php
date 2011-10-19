@@ -50,6 +50,10 @@
 }
 
 .forum-reply {
+	box-shadow: -1px 1px 4px #bbb;
+	-webkit-border-radius: 10px 3px 3px 3px;
+	-moz-border-radius: 10px 3px 3px 3px;
+	border-radius: 10px 3px 3px 3px;
 }
 
 .forum-topic .forum-reply-icon {
@@ -117,8 +121,6 @@
 
 .forum-reply-module {
 	margin-bottom: 5px;
-	-webkit-border-radius: 10px 3px 3px 3px;
-	-moz-border-radius: 10px 3px 3px 3px;
 	border-radius: 10px 3px 3px 3px;
 }
 
