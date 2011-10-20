@@ -11,6 +11,8 @@
  * @TODO
  * 	- permissions?
  *  - set access_id of all replies and topics if forum access changes (group only?)
+ *  - count replies in topic
+ *  - change topics in forum.. to discussion topics
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -42,7 +44,7 @@ function forums_init() {
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
 
 	// add the group foruns tool option
-	add_group_tool_option('forums',elgg_echo('groups:enableforums'), TRUE);
+	add_group_tool_option('forums', elgg_echo('groups:enableforums'), TRUE);
 
 	// Profile block hook
 	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'forums_owner_block_menu');
