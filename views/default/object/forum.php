@@ -37,7 +37,7 @@ if ($full_view) {
 	$body = elgg_view('object/elements/summary', $params);
 	$summary = elgg_view_image_block('', $body);
 	
-	$topics_title = elgg_echo('forums:title:topics', array($forum->title));
+	$topics_title = elgg_echo('forums:title:topics');
 	$topics_list = elgg_view('forums/topics', $vars);
 	
 	$topic_new = elgg_view('output/url', array(
@@ -53,11 +53,11 @@ if ($full_view) {
 			$summary
 			<div class='forum-topics'>
 				<div class='forum-topics-header'>
-					<h4>$topics_title</h4>
+					<h3>$topics_title</h3>
 					<div class='forum-topics-controls'>
 						$topic_new
 					</div>
-					<div style='clear: both;'></div>
+					<div style='clear: both;'></div><br />
 				</div>
 				<div class='forum-topics-list'>
 					$topics_list

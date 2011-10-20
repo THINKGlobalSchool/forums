@@ -25,7 +25,7 @@ $english = array(
 
 	// Page titles 
 	'forums:title:allforums' => 'All Site Forums',
-	'forums:title:topics' => 'Topics in forum: %s',
+	'forums:title:topics' => 'Discussion Topics',
 	'forums:title:topicedit' => 'Edit Topic',
 	'forums:title:replyedit' => 'Edit reply',
 	'forums:title:ownerforums' => '%s\'s Forums',
@@ -57,6 +57,8 @@ $english = array(
 	'forums:label:bymask' => '%s',
 	'forums:label:moderatormask' => 'Moderator Mask',
 	'forums:label:groupforums' => 'Group forums',
+	'forums:label:replycount' => 'Replies: %s',
+	'forums:label:topiccount' => 'Topics: %s',
 
 	// River
 	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
