@@ -86,7 +86,8 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 
 	// Other content
-	'groups:enableforum' => 'Enable group forums',
+	'groups:enableforums' => 'Enable group forums',
+	'groups:enableforum' => 'Enable group discussions',
 );
 
 add_translation('en',$english);
