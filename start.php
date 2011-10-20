@@ -11,8 +11,6 @@
  * @TODO
  * 	- permissions?
  *  - set access_id of all replies and topics if forum access changes (group only?)
- *  - count replies in topic
- *  - change topics in forum.. to discussion topics
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -244,7 +242,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 	}
 
 	// Add anonymous label
-	if ($entity->getSubtype() == 'forum' && $entity->anonymous) {
+	if ($subtype == 'forum' && $entity->anonymous) {
 		$options = array(
 			'name' => "anonymous_forum",
 			'text' =>  elgg_echo('forums:label:anonymous'),
@@ -254,6 +252,60 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$return[] = ElggMenuItem::factory($options);
 	}
 
+	// Count topics/replies for forum listing
+	if ($subtype == 'forum') {
+		$topic_count = elgg_get_entities(array(
+			'type' => 'object',
+			'subtype' => 'forum_topic',
+			'container_guid' => $entity->guid,
+			'limit' => 0,
+			'count' => TRUE,
+		));
+
+		$reply_count = elgg_get_entities(array(
+			'type' => 'object',
+			'subtype' => 'forum_reply',
+			'container_guid' => $entity->guid,
+			'limit' => 0,
+			'count' => TRUE,
+		));
+
+		$options = array(
+			'name' => 'topic_count',
+			'text' => elgg_echo('forums:label:topiccount', array($topic_count)),
+			'priority' => 2,
+			'href' => FALSE,
+		);
+		$return[] = ElggMenuItem::factory($options);
+
+		$options = array(
+			'name' => 'reply_count',
+			'text' => elgg_echo('forums:label:replycount', array($reply_count)),
+			'priority' => 3,
+			'href' => FALSE,
+		);
+		$return[] = ElggMenuItem::factory($options);
+	}
+
+	// Count replies
+	if ($subtype == 'forum_topic') {
+		$count = elgg_get_entities_from_metadata(array(
+			'type' => 'object',
+			'subtype' => 'forum_reply',
+			'metadata_name' => 'topic_guid',
+			'metadata_value' => $entity->guid,
+			'limit' => 0,
+			'count' => TRUE,
+		));
+
+		$options = array(
+			'name' => 'reply_count',
+			'text' => elgg_echo('forums:label:replycount', array($count)),
+			'priority' => 2,
+			'href' => FALSE,
+		);
+		$return[] = ElggMenuItem::factory($options);
+	}
 	return $return;
 }
 

@@ -30,7 +30,7 @@
 	padding: 3px 0;
 }
 
-.forum .forum-topics-header h4 {
+.forum .forum-topics-header h3 {
 	float: left;
 }
 
