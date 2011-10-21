@@ -269,6 +269,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'limit' => 0,
 			'count' => TRUE,
 		));
+		
+		$topic_count = $topic_count ? $topic_count : 0;
 
 		$reply_count = elgg_get_entities(array(
 			'type' => 'object',
@@ -277,6 +279,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'limit' => 0,
 			'count' => TRUE,
 		));
+		
+		$reply_count = $reply_count ? $reply_count : 0;
 
 		$options = array(
 			'name' => 'topic_count',
@@ -305,6 +309,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'limit' => 0,
 			'count' => TRUE,
 		));
+		
+		$count = $count ? $count : 0;
 
 		$options = array(
 			'name' => 'reply_count',
