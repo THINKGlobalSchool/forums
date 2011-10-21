@@ -60,8 +60,10 @@ $anonymous_input = elgg_view('input/dropdown', array(
 
 if ($anonymous) {
 	$mask_display = 'visible';
+	$access_display = 'none';
 } else {
 	$mask_display = 'none';
+	$access_display = 'visible';
 }
 
 $moderator_mask_label = elgg_echo('forums:label:moderatormask');
@@ -117,15 +119,19 @@ $form_body = <<<HTML
 		<label>$anonymous_label</label>
         $anonymous_input
 	</div><br />
-	<div id='moderator-mask-container' style='display: $mask_display;'>
-		<label>$moderator_mask_label</label>
-		$moderator_mask_input<br /><br />
+	<div id='anonymous-container' style='display: $mask_display;'>
+		<div>
+			<label>$moderator_mask_label</label>
+			$moderator_mask_input<br /><br />
+		</div>
+	</div>
+	<div id='access-container' style='display: $access_display;'>
+		$access
 	</div>
 	<div>
 		<label>$roles_label</label>
 		$roles_input
 	</div><br />
-	$access
 	<div class='elgg-foot'>
 		$submit_input
 		$entity_hidden

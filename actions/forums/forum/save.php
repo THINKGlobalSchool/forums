@@ -36,6 +36,9 @@ if (!$title || !$description) {
 	forward(REFERER);
 }
 
+// If forum is anonymous, use a different access id
+$access_id = $anonymous ? ACCESS_ANONYMOUS : $access_id;
+
 // New Forum
 if (!$guid) {
 	$forum = new ElggObject();
@@ -53,6 +56,21 @@ if (!$guid) {
 	if (!elgg_instanceof($forum, 'object', 'forum')) {
 		register_error(elgg_echo('forums:error:forum:edit'));
 		forward(REFERER);
+	}
+
+	// Get this forums topics and replies to update their access_id
+	$options = array(
+		'type' => 'object',
+		'subtypes' => array('forum_topic', 'forum_reply'),
+		'limit' => 0,
+		'container_guid' => $forum->guid,
+	);
+
+	$contents = new ElggBatch('elgg_get_entities', $options);
+
+	foreach ($contents as $content) {
+		$content->access_id = $access_id;
+		$content->save();
 	}
 }
 
