@@ -9,6 +9,8 @@
  * @link http://www.thinkglobalschool.com/
  * 
  */
+elgg_load_js('elgg.forums');
+
 $form_vars = array(
 	'id' => 'forum-edit-form',
 );

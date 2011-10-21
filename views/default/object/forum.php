@@ -26,7 +26,7 @@ $metadata = elgg_view_menu('entity', array(
 ));
 
 if ($full_view) {
-	
+
 	$params = array(
 		'title' => FALSE,
 		'entity' => $forum,

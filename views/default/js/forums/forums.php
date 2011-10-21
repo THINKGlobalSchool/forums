@@ -18,9 +18,11 @@ elgg.forums.init = function() {
 	// Show the moderator mask input
 	$('select#anonymous').change(function() {
 		if($(this).val() == '1') {
-			$('#moderator-mask-container').show();
+			$('#anonymous-container').show();
+			$('#access-container').hide();
 		} else {
-			$('#moderator-mask-container').hide();
+			$('#anonymous-container').hide();
+			$('#access-container').show();
 		}
 	});
 }

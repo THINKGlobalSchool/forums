@@ -8,9 +8,6 @@
  * @copyright THINK Global School 2010
  * @link http://www.thinkglobalschool.com/
  * 
- * @TODO
- * 	- permissions?
- *  - set access_id of all replies and topics if forum access changes (group only?)
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -18,6 +15,9 @@ elgg_register_event_handler('init', 'system', 'forums_init');
 function forums_init() {
 	// Relationship definitions
 	define('FORUM_REPLY_RELATIONSHIP', 'forum_reply_to');
+
+	// Anonymous access definition
+	define('ACCESS_ANONYMOUS', -9887);
 
 	// Register and load library
 	elgg_register_library('elgg:forums', elgg_get_plugins_path() . 'forums/lib/forums.php');
@@ -64,6 +64,8 @@ function forums_init() {
 
 	// Remove public from forum access array
 	elgg_register_plugin_hook_handler('access:collections:write', 'user', 'forums_access_id_handler');
+
+	elgg_register_plugin_hook_handler('access:collections:read', 'user', 'forums_read_access_handler');
 
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
@@ -224,7 +226,13 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				unset($return[$idx]);
 			}
 
+			// Remove access for forum topics and forum replies
 			if (($subtype == 'forum_topic' || $subtype =='forum_reply') && $item->getName() == 'access') {
+				unset($return[$idx]);
+			}
+
+			// Remove access for anonymous groups
+			if ($subtype == 'forum' && $item->getName() == 'access' && $entity->anonymous) {
 				unset($return[$idx]);
 			}
 
@@ -247,7 +255,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'name' => "anonymous_forum",
 			'text' =>  elgg_echo('forums:label:anonymous'),
 			'href' => FALSE,
-			'priority' => 1,
+			'priority' => 100,
 		);
 		$return[] = ElggMenuItem::factory($options);
 	}
@@ -420,6 +428,24 @@ function forums_owner_block_menu($hook, $type, $value, $params) {
 function forums_access_id_handler($hook, $type, $value, $params) {
 	if (elgg_in_context('group_forum_access')) {
 		unset($value[ACCESS_PUBLIC]); // Remove public
+	}
+	return $value;
+}
+
+/**
+ * Insert the anonymous access level for qualified users
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_read_access_handler($hook, $type, $value, $params) {
+	if (is_callable('parentportal_is_user_parent')) {
+		if (!parentportal_is_user_parent(elgg_get_logged_in_user_entity())) {
+			$value[] = ACCESS_ANONYMOUS;
+		}
 	}
 	return $value;
 }
