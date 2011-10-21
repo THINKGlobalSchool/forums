@@ -79,6 +79,7 @@ if (!elgg_instanceof($entity = get_entity($container_guid), 'group')) {
 		'name' => 'moderator_role',
 		'id' => 'moderator-role',
 		'value' => $moderator_role,
+		'show_hidden' => TRUE,
 	));
 } else {
 	$c = elgg_get_context();
