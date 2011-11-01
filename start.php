@@ -8,6 +8,7 @@
  * @copyright THINK Global School 2010
  * @link http://www.thinkglobalschool.com/
  * 
+ * THIS PLUGIN NEEDS TO BE FIRST IN THE LIST
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
@@ -25,10 +26,12 @@ function forums_init() {
 
 	// Register CSS
 	$f_css = elgg_get_simplecache_url('css', 'forums/css');
+	elgg_register_simplecache_view('css/forums/css');
 	elgg_register_css('elgg.forums', $f_css);
 
 	// Register JS libraries
 	$f_js = elgg_get_simplecache_url('js', 'forums/forums');
+	elgg_register_simplecache_view('js/forums/forums');
 	elgg_register_js('elgg.forums', $f_js);
 
 	// Add main menu item
