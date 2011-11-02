@@ -36,6 +36,8 @@ if (elgg_in_context('widgets')) {
 
 $tags = elgg_view('output/tags', array('tags' => $topic->tags));
 
+$forum = $topic->getContainerEntity();
+
 if ($full) {
 
 	$owner_link = elgg_view('output/url', array(
@@ -43,7 +45,12 @@ if ($full) {
 		'text' => $owner->name,
 	));
 
-	$author_text = elgg_echo('forums:label:topicstartedby', array($owner_link));
+	if ($forum->anonymous) {
+		$mask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+		$author_text = elgg_echo('forums:label:topicstartedby', array($mask));
+	} else {
+		$author_text = elgg_echo('forums:label:topicstartedby', array($owner_link));
+	}
 
 	$params = array(
 		'entity' => $topic,
@@ -86,9 +93,7 @@ if ($full) {
 	</div>
 HTML;
 
-} else {
-	// brief view
-	$forum = $topic->getContainerEntity();
+} else { // brief view
 
 	// If anonymous, display as such
 	if ($forum->anonymous) {
