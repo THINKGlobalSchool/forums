@@ -288,6 +288,7 @@ function forums_prepare_topic_form_vars($topic = NULL, $container_guid = '') {
 		'description' => '',
 		'container_guid' => $container_guid,
 		'guid' => '',
+		'tags' => '',
 	);
 
 	if ($topic) {

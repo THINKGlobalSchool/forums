@@ -15,6 +15,7 @@ $title = elgg_extract('title', $vars, '');
 $guid = elgg_extract('guid', $vars);
 $description = elgg_extract('description', $vars, '');
 $container_guid = elgg_extract('container_guid', $vars);
+$tags = elgg_extract('tags', $vars, '');
 
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
@@ -45,6 +46,12 @@ $title_input = elgg_view('input/text', array(
 	'value' => $title
 ));
 
+$tags_label = elgg_echo('tags');
+$tags_input = elgg_view('input/tags', array(
+	'name' => 'tags',
+	'value' => $tags
+));
+
 $container_hidden = elgg_view('input/hidden', array(
 	'name' => 'container_guid',
 	'value' => $container_guid
@@ -64,6 +71,10 @@ $form_body = <<<HTML
         $title_input
 	</div><br />
 	$body
+	<div>
+		<label>$tags_label</label><br />
+		$tags_input
+	</div><br />
 	<div class='elgg-foot'>
 		$submit_input
 		$entity_hidden

@@ -47,6 +47,7 @@ $english = array(
 	'forums:label:body' => 'Body',
 	'forums:label:replyby' => '%s',
 	'forums:label:dateline' => 'posted %s', 
+	'forums:label:topicstartedby' => ' Started by %s',
 	'forums:label:replytothis' => 'Reply to this',
 	'forums:label:replytotopic' => 'Reply to topic',
 	'forums:label:totopic' => '&nbsp;to topic: %s',
@@ -62,7 +63,7 @@ $english = array(
 
 	// River
 	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
-	'river:create:object:forum_topic' => '%s create a new topic titled %s in the forum %s',
+	'river:create:object:forum_topic' => '%s created a new topic titled %s in the forum %s',
 
 	// Messages
 	'forums:error:requiredfields' => 'One or more required fields are missing',

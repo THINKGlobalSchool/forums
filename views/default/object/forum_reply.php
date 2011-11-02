@@ -52,7 +52,7 @@ if ($full) {
 		$icon_url = $owner->getIconURL('topbar');
 		$owner_icon = "<img src=\"$icon_url\" alt=\"$owner->name\" title=\"$owner->name\" class='forum-reply-icon elgg-border-plain elgg-transition' />";
 		$owner_link = elgg_view('output/url', array(
-			'href' => "blog/owner/$owner->username",
+			'href' => "profile/$owner->username",
 			'text' => $owner_icon . $owner->name,
 		));
 	}
@@ -110,7 +110,7 @@ HTML;
 		$subtitle = "<p>$owner_text $date</p>";
 	} else {
 		$owner_link = elgg_view('output/url', array(
-			'href' => "blog/owner/$owner->username",
+			'href' => "profile/$owner->username",
 			'text' => $owner->name,
 		));
 
