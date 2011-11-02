@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2011
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -27,7 +27,6 @@ $metadata = elgg_view_menu('entity', array(
 	'class' => 'elgg-menu-hz',
 ));
 
-
 $date = elgg_view_friendly_time($topic->time_created);
 
 // do not show the metadata and controls in widget view
@@ -35,8 +34,33 @@ if (elgg_in_context('widgets')) {
 	$metadata = '';
 }
 
+$tags = elgg_view('output/tags', array('tags' => $topic->tags));
+
 if ($full) {
-	$content = elgg_view('forums/replies', $vars);
+
+	$owner_link = elgg_view('output/url', array(
+		'href' => "profile/$owner->username",
+		'text' => $owner->name,
+	));
+
+	$author_text = elgg_echo('forums:label:topicstartedby', array($owner_link));
+
+	$params = array(
+		'entity' => $topic,
+		'metadata' => $metadata,
+		'tags' => $tags,
+		'content' => '',
+		'title' => ' ',
+		'subtitle' => $author_text
+	);
+
+	$params = $params + $vars;
+
+	$body = elgg_view('object/elements/summary', $params);
+
+	$content = elgg_view_image_block($owner_icon, $body);
+
+	$content .= elgg_view('forums/replies', $vars);
 
 	$content .= elgg_view('output/url', array(
 		'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytotopic"), 
@@ -79,7 +103,7 @@ HTML;
 		$subtitle = "<p>$owner_text $date</p>";
 	} else {
 		$owner_link = elgg_view('output/url', array(
-			'href' => "blog/owner/$owner->username",
+			'href' => "profile/$owner->username",
 			'text' => $owner->name,
 		));
 

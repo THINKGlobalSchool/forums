@@ -14,6 +14,7 @@
 $title = get_input('title');
 $description = get_input ('description');
 $container_guid = get_input('container_guid');
+$tags = string_to_tag_array(get_input('tags'));
 $guid = get_input('guid');
 
 // Create Sticky form
@@ -46,6 +47,7 @@ if (!$guid) {
 }
 
 $topic->title = $title;
+$topic->tags = $tags;
 
 // Try saving
 if (!$topic->save()) {
