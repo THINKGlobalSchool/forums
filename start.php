@@ -40,6 +40,12 @@ function forums_init() {
 
 	// Register page handler
 	elgg_register_page_handler('forums','forums_page_handler');
+	
+	// Unregister discussion page handler
+	elgg_unregister_page_handler('discussion');
+	
+	// Register new discussion handler
+	elgg_register_page_handler('discussion','discussion_redirect_page_handler');
 
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
@@ -175,6 +181,36 @@ function forums_page_handler($page) {
 	
 	return TRUE;
 }
+
+/**
+ * Redirect Discussion page handler
+ */
+function discussion_redirect_page_handler($page) {
+	$forum_link = elgg_view('output/url', array(
+		'value' => elgg_get_site_url() . "forums",
+		'text' => elgg_echo('forums'),
+	));
+
+	if (elgg_instanceof(get_entity($page[1]), 'group')) {
+		elgg_set_page_owner_guid($page[1]);
+		$forum_link = elgg_view('output/url', array(
+			'value' => elgg_get_site_url() . "forums/group/{$page[1]}/all",
+			'text' => elgg_echo('forums'),
+		));
+	}
+
+	$content = elgg_echo('forums:label:redirectforums', array($forum_link));
+	
+	$params = array(
+		'content' => $content,
+		'title' => elgg_echo('forums:label:discussiondisabled'),
+		'filter' => '',
+	);
+	$body = elgg_view_layout('content', $params);
+	
+	echo elgg_view_page($title, $body);
+}
+
 
 /**
  * Populates the ->getUrl() method for forum entities
