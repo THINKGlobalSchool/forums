@@ -60,6 +60,8 @@ $english = array(
 	'forums:label:groupforums' => 'Group forums',
 	'forums:label:replycount' => 'Replies: %s',
 	'forums:label:topiccount' => 'Topics: %s',
+	'forums:label:discussiondisabled' => 'Discussions Moved',
+	'forums:label:redirectforums' => 'Discussions have been moved to %s',
 
 	// River
 	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
