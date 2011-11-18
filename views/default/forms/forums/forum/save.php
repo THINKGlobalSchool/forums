@@ -14,7 +14,6 @@
 $title = elgg_extract('title', $vars, '');
 $guid = elgg_extract('guid', $vars);
 $description = elgg_extract('description', $vars, '');
-$moderator_role = elgg_extract('moderator_role', $vars, '');
 $anonymous = elgg_extract('anonymous', $vars, FALSE);
 $moderator_mask = elgg_extract('moderator_mask', $vars, FALSE);
 $access_id = elgg_extract('access_id', $vars);
@@ -72,10 +71,12 @@ $moderator_mask_input = elgg_view('input/text', array(
 	'value' => $moderator_mask,
 ));
 
-// If the container is a group, don't display the moderator role
+// If the container is a group, display  don't display the moderator role
 if (!elgg_instanceof($entity = get_entity($container_guid), 'group')) {
-	$roles_label = elgg_echo('forums:label:moderator_role');
-	$roles_input = elgg_view('input/roledropdown', array(
+	$moderator_role = elgg_extract('moderator_role', $vars, '');
+
+	$moderator_label = elgg_echo('forums:label:moderator_role');
+	$moderator_input = elgg_view('input/roledropdown', array(
 		'name' => 'moderator_role',
 		'id' => 'moderator-role',
 		'value' => $moderator_role,
@@ -97,6 +98,19 @@ if (!elgg_instanceof($entity = get_entity($container_guid), 'group')) {
 			$access_input
 		</div><br />
 HTML;
+
+	$moderators = elgg_extract('moderators', $vars, '');
+
+	if (!is_array($moderators)) {
+		$moderators = array($moderators);
+	}
+
+	$moderator_label = elgg_echo('forums:label:moderators');
+	$moderator_input = elgg_view('input/userpicker', array(
+		'id' => 'moderator-picker',
+		'name' => 'moderators',
+		'value' => $moderators
+	));
 }
 
 $submit_input = elgg_view('input/submit', array(
@@ -130,8 +144,8 @@ $form_body = <<<HTML
 		$access
 	</div>
 	<div>
-		<label>$roles_label</label>
-		$roles_input
+		<label>$moderator_label</label>
+		$moderator_input
 	</div><br />
 	<div class='elgg-foot'>
 		$submit_input

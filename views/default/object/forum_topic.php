@@ -38,6 +38,12 @@ $tags = elgg_view('output/tags', array('tags' => $topic->tags));
 
 $forum = $topic->getContainerEntity();
 
+// Safety precaution! In case someone tries to view this topic directly with http://site/view/{guid}
+if (elgg_instanceof($forum->getContainerEntity(), 'group')) {
+	elgg_set_page_owner_guid($forum->container_guid);
+	group_gatekeeper();
+}
+
 if ($full) {
 
 	$owner_link = elgg_view('output/url', array(

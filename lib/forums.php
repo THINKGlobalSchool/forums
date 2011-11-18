@@ -168,7 +168,7 @@ function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
 	$params = array(
 		'filter' => '',
 	);
-	
+
 	// Form vars
 	$vars = array();
 	$vars['id'] = 'forum-topic-edit-form';
@@ -203,7 +203,7 @@ function forums_get_page_content_topic_edit($page_type, $guid = NULL) {
 			$content = elgg_echo('forums:error:forum:invalid');
 		}
 	}
-	
+
 	$params['content'] = $content;
 	$params['title'] = $title;
 	return $params;
@@ -257,6 +257,7 @@ function forums_prepare_forum_form_vars($forum = NULL) {
 		'description' => '',
 		'anonymous' => '',
 		'moderator_role' => '',
+		'moderators' => '',
 		'moderator_mask' => '',
 		'guid' => '',
 		'access_id' => ACCESS_LOGGED_IN,
@@ -405,8 +406,16 @@ function forums_is_moderator($user, $forum) {
 	// Grab container to check for group
 	$container = $forum->getContainerEntity();
 
+	// Grab the optionally set moderators (for groups)
+	$group_moderators = $forum->moderators;
+
+	// Make sure we have an array
+	if (!is_array($group_moderators)) {
+		$group_moderators = array($group_moderators);
+	}
+
 	if ($user->isAdmin()
-		|| (elgg_instanceof($container, 'group') && $container->getOwnerEntity() == $user)
+		|| (elgg_instanceof($container, 'group') && ($container->getOwnerEntity() == $user ||  in_array($user->guid, $group_moderators)))
 		|| roles_is_member($forum->moderator_role, $user->guid))
 	{
 		return TRUE;
