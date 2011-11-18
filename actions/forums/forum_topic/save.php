@@ -47,7 +47,11 @@ if (!$guid) {
 }
 
 $topic->title = $title;
-$topic->tags = $tags;
+
+// Make sure not to set any tags on anonymous posts
+if (!$topic->getContainerEntity()->anonymous) {
+	$topic->tags = $tags;
+}
 
 // Try saving
 if (!$topic->save()) {

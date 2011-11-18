@@ -17,6 +17,8 @@ $description = elgg_extract('description', $vars, '');
 $container_guid = elgg_extract('container_guid', $vars);
 $tags = elgg_extract('tags', $vars, '');
 
+$forum = get_entity($container_guid);
+
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
 	$entity_hidden  = elgg_view('input/hidden', array(
@@ -46,11 +48,14 @@ $title_input = elgg_view('input/text', array(
 	'value' => $title
 ));
 
-$tags_label = elgg_echo('tags');
-$tags_input = elgg_view('input/tags', array(
-	'name' => 'tags',
-	'value' => $tags
-));
+// Don't show tags input on anonymous forums
+if (!$forum->anonymous) {
+	$tags_label = elgg_echo('tags');
+	$tags_input = elgg_view('input/tags', array(
+		'name' => 'tags',
+		'value' => $tags
+	));
+}
 
 $container_hidden = elgg_view('input/hidden', array(
 	'name' => 'container_guid',
@@ -71,7 +76,7 @@ $form_body = <<<HTML
         $title_input
 	</div><br />
 	$body
-	<div>
+	<div id='tags-input'>
 		<label>$tags_label</label><br />
 		$tags_input
 	</div><br />
