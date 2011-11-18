@@ -35,9 +35,15 @@ if (elgg_in_context('widgets')) {
 	$metadata = '';
 }
 
-if ($full) {
-	$forum = $reply->getContainerEntity();
+$forum = $reply->getContainerEntity();
 
+// Safety precaution! In case someone tries to view this topic directly with http://site/view/{guid}
+if (elgg_instanceof($forum->getContainerEntity(), 'group')) {
+	elgg_set_page_owner_guid($forum->container_guid);
+	group_gatekeeper();
+}
+
+if ($full) {
 	$dateline = elgg_echo('forums:label:dateline', array($date));
 
 	// If anonymous, display as such
@@ -95,8 +101,6 @@ if ($full) {
 HTML;
 } else {
 	// brief view
-	$forum = $reply->getContainerEntity();
-	
 	// If anonymous, display as such
 	if ($forum->anonymous) {
 		// If the owner is an admin or a member of the moderator role, display mask

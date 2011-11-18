@@ -41,6 +41,7 @@ $english = array(
 	'forums:label:yes' => 'Yes',
 	'forums:label:no' => 'No',
 	'forums:label:moderator_role' => 'Moderator Role',
+	'forums:label:moderators' => 'Forum Moderators',
 	'forums:label:notopics' => 'No topics have been created',
 	'forums:label:noreplies' => 'No replies have been created',
 	'forums:label:newtopic' => 'New Topic',

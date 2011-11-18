@@ -116,6 +116,7 @@ function forums_page_handler($page) {
 			}
 			break;
 		case 'view':
+			group_gatekeeper();
 			$params = forums_get_page_content_view($page[1]);
 			break;
 		case 'all':
@@ -143,15 +144,43 @@ function forums_page_handler($page) {
 			}
 			break;
 		case 'forum_topic':
+			// Grab entity
+			$entity = get_entity($page[2]);
+
+			if (!elgg_instanceof($entity, 'object', 'forum') && !elgg_instanceof($entity, 'object', 'forum_topic')) {
+				forward('forums');
+			}
+
+			// Get the container of the forum
+			if ($entity->getSubtype() == 'forum_topic') {
+				// Forum topic
+				$forum = get_entity($entity->container_guid);
+				if (!elgg_instanceof($forum, 'object', 'forum')) {
+					forward('forums');
+				}
+				$container = get_entity($forum->container_guid);
+			} else {
+				// Forum
+				$container = get_entity($entity->container_guid);
+			}
+
+			// Set page owner to group if the forum's container is one
+			if (elgg_instanceof($container, 'group')) {
+				elgg_set_page_owner_guid($container->guid);
+			}
+
 			// Handle topics
 			switch ($page[1]) {
 				case 'add':
+					group_gatekeeper();
 					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
 					break;
 				case 'edit':
+					group_gatekeeper();
 					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
 					break;
 				case 'view':
+					group_gatekeeper();
 					$params = forums_get_page_content_view($page[2]);
 					break;
 				default:
@@ -171,9 +200,6 @@ function forums_page_handler($page) {
 			}
 			break;
 	}
-	
-	// Custom sidebar (none at the moment)
-	$params['sidebar'] .= elgg_view('todo/sidebar');
 
 	$body = elgg_view_layout($params['layout'] ? $params['layout'] : 'content', $params);
 
@@ -435,7 +461,7 @@ function forums_write_permission_check($hook, $entity_type, $returnvalue, $param
 		$forum = get_entity($params['entity']->container_guid);
 
 		// Check if member is part of the forum's moderator role
-		if (roles_is_member($forum->moderator_role, $params['user']->guid)) {
+		if (forums_is_moderator($params['user'], $forum)) {
 			return TRUE;
 		}
 	}
@@ -462,7 +488,7 @@ function forums_owner_block_menu($hook, $type, $value, $params) {
 }
 
 /**
- * Plugin hook to remove public access level from forums
+ * Plugin hook to remove unwanted access levels from forums
  *
  * @param unknown_type $hook
  * @param unknown_type $type
@@ -473,6 +499,7 @@ function forums_owner_block_menu($hook, $type, $value, $params) {
 function forums_access_id_handler($hook, $type, $value, $params) {
 	if (elgg_in_context('group_forum_access')) {
 		unset($value[ACCESS_PUBLIC]); // Remove public
+		unset($value[ACCESS_PRIVATE]); // Remove private
 	}
 	return $value;
 }
@@ -487,10 +514,10 @@ function forums_access_id_handler($hook, $type, $value, $params) {
  * @return unknown
  */
 function forums_read_access_handler($hook, $type, $value, $params) {
-	if (is_callable('parentportal_is_user_parent')) {
-		if (!parentportal_is_user_parent(elgg_get_logged_in_user_entity())) {
-			$value[] = ACCESS_ANONYMOUS;
-		}
+	$user = elgg_get_logged_in_user_entity();
+
+	if (!$user->is_parent) {
+		$value[] = ACCESS_ANONYMOUS;
 	}
 	return $value;
 }
