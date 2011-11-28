@@ -71,6 +71,9 @@ function forums_init() {
 	// Forum permissions handler
 	elgg_register_plugin_hook_handler('container_permissions_check', 'object', 'forums_container_write_permission_check');
 
+	// Remove comments from forum related river entries
+	elgg_register_plugin_hook_handler('register', 'menu:river', 'forums_river_menu_setup');
+
 	// Remove public from forum access array
 	elgg_register_plugin_hook_handler('access:collections:write', 'user', 'forums_access_id_handler');
 
@@ -436,11 +439,11 @@ function forums_reply_delete_event_listener($event, $object_type, $object) {
  * Extend permissions checking to extend can-edit for write users.
  *
  * @param unknown_type $hook
- * @param unknown_type $entity_type
- * @param unknown_type $returnvalue
+ * @param unknown_type $type
+ * @param unknown_type $value
  * @param unknown_type $params
  */
-function forums_container_write_permission_check($hook, $entity_type, $returnvalue, $params) {
+function forums_container_write_permission_check($hook, $type, $value, $params) {
 	if ($params['container']->getSubtype() == 'forum') {
 		return TRUE; // Anyone can write to forum containers
 	}
@@ -450,11 +453,11 @@ function forums_container_write_permission_check($hook, $entity_type, $returnval
  * Extend permissions checking to extend can-edit for write users.
  *
  * @param unknown_type $hook
- * @param unknown_type $entity_type
- * @param unknown_type $returnvalue
+ * @param unknown_type $type
+ * @param unknown_type $value
  * @param unknown_type $params
  */
-function forums_write_permission_check($hook, $entity_type, $returnvalue, $params) {
+function forums_write_permission_check($hook, $type, $value, $params) {
 	if ($params['entity']->getSubtype() == 'forum_topic'
 		|| $params['entity']->getSubtype() == 'forum_reply') {
 
@@ -465,6 +468,27 @@ function forums_write_permission_check($hook, $entity_type, $returnvalue, $param
 			return TRUE;
 		}
 	}
+}
+
+/**
+ * Remove comment button from forum objects
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_river_menu_setup($hook, $type, $value, $params) {
+	if (elgg_is_logged_in()) {
+		$item = $params['item'];
+		$object = $item->getObjectEntity();
+		if (elgg_instanceof($object, 'object', 'forum_reply') || elgg_instanceof($object, 'object', 'forum_topic')) {
+			return false;
+		}
+	}
+
+	return $value;
 }
 
 /**
