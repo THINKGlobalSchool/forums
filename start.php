@@ -520,7 +520,7 @@ function forums_river_menu_setup($hook, $type, $value, $params) {
 		$item = $params['item'];
 		$object = $item->getObjectEntity();
 		if (elgg_instanceof($object, 'object', 'forum_reply') || elgg_instanceof($object, 'object', 'forum_topic')) {
-			return false;
+			return array();
 		}
 	}
 
