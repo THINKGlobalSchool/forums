@@ -26,6 +26,12 @@ if (!elgg_instanceof($topic, 'object', 'forum_topic')) {
 	forward(REFERER);
 }
 
+// Double check to make sure we're not replying to a closed topic
+if ($topic->topic_status == 'closed') {
+	register_error(elgg_echo('forums:label:closeddesc'));
+	forward(REFERER);
+}
+
 if (!$description) {
 	register_error(elgg_echo('forums:error:requiredfields'));
 	forward(REFERER);

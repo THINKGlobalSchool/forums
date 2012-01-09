@@ -75,26 +75,32 @@ if ($full) {
 
 	$content .= elgg_view('forums/replies', $vars);
 
-	$content .= elgg_view('output/url', array(
-		'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytotopic"), 
-		'href' => '#forum-reply-edit-form-' . $topic->guid,
-		'class' => 'forum-reply-button',
-		'rel' => 'toggle',
-	));
+	// No replying to closed topics
+	if ($topic->topic_status != 'closed') {
+		$content .= elgg_view('output/url', array(
+			'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytotopic"),
+			'href' => '#forum-reply-edit-form-' . $topic->guid,
+			'class' => 'forum-reply-button',
+			'rel' => 'toggle',
+		));
 	
-	// Reply form vars
-	$form_vars = array(
-		'id' => 'forum-reply-edit-form-' . $topic->guid,
-		'class' => 'forum-reply-edit-form',
-		'name' => 'forum-reply-edit-form',
-	);
+		// Reply form vars
+		$form_vars = array(
+			'id' => 'forum-reply-edit-form-' . $topic->guid,
+			'class' => 'forum-reply-edit-form',
+			'name' => 'forum-reply-edit-form',
+		);
 		
-	$body_vars = forums_prepare_reply_form_vars(NULL, $topic->guid);
+		$body_vars = forums_prepare_reply_form_vars(NULL, $topic->guid);
 
-	$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
+		$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
+	} else {
+		$closed = "<h4>" . elgg_echo('forums:label:closeddesc') . "</h4>";
+	}
 	
 	echo <<<HTML
 	<div class='forum-topic'>
+		$closed
 		$content
 	</div>
 HTML;
