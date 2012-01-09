@@ -92,6 +92,7 @@ function forums_init() {
 	elgg_register_action('forums/forum/delete', "$action_base/forum/delete.php");
 	elgg_register_action('forums/forum_topic/delete', "$action_base/forum_topic/delete.php");
 	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
+	elgg_register_action('forums/forum_topic/status', "$action_base/forum_topic/status.php");
 
 	return TRUE;
 }
@@ -367,8 +368,9 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$return[] = ElggMenuItem::factory($options);
 	}
 
-	// Count replies
+	// Count replies, close/open thread command
 	if ($subtype == 'forum_topic') {
+		// Count replies
 		$count = elgg_get_entities_from_metadata(array(
 			'type' => 'object',
 			'subtype' => 'forum_reply',
@@ -383,10 +385,44 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$options = array(
 			'name' => 'reply_count',
 			'text' => elgg_echo('forums:label:replycount', array($count)),
-			'priority' => 2,
+			'priority' => 3,
 			'href' => FALSE,
 		);
 		$return[] = ElggMenuItem::factory($options);
+
+		if ($entity->canEdit()) {
+
+			if ($entity->topic_status == 'closed') {
+				$options = array(
+					'name' => 'open_topic',
+					'text' => elgg_echo('forums:label:openthread', array($count)),
+					'priority' => 1,
+					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=open",
+					'confirm' => elgg_echo('forums:label:openconfirm'),
+				);
+			} else {
+				$options = array(
+					'name' => 'close_topic',
+					'text' => elgg_echo('forums:label:closethread', array($count)),
+					'priority' => 1,
+					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=closed",
+					'confirm' => elgg_echo('forums:label:closeconfirm'),
+				);
+			}
+			$return[] = ElggMenuItem::factory($options);
+		}
+
+		// Display topic closed for all users
+		if ($entity->topic_status == 'closed') {
+			$options = array(
+				'name' => 'topic_closed',
+				'text' => elgg_echo('forums:label:closed'),
+				'priority' => 2,
+				'href' => FALSE,
+			);
+
+			$return[] = ElggMenuItem::factory($options);
+		}
 	}
 	return $return;
 }

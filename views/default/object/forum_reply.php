@@ -36,6 +36,7 @@ if (elgg_in_context('widgets')) {
 }
 
 $forum = $reply->getContainerEntity();
+$topic = get_entity($reply->topic_guid);
 
 // Safety precaution! In case someone tries to view this topic directly with http://site/view/{guid}
 if (elgg_instanceof($forum->getContainerEntity(), 'group')) {
@@ -70,23 +71,27 @@ if ($full) {
 		'value' => $reply->description
 	)) . "</div>";
 
-	$content .= elgg_view('output/url', array(
-		'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytothis"), 
-		'href' => '#forum-reply-edit-form-' . $reply->guid,
-		'class' => 'forum-reply-button reply-to-reply',
-		'rel' => 'toggle',
-	)) . "<div style='clear: both;'></div>";
+	// No replying to closed topics
+	if ($topic->topic_status != 'closed') {
+		$content .= elgg_view('output/url', array(
+			'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytothis"),
+			'href' => '#forum-reply-edit-form-' . $reply->guid,
+			'class' => 'forum-reply-button reply-to-reply',
+			'rel' => 'toggle',
+		)) . "<div style='clear: both;'></div>";
 
-	// Reply form vars
-	$form_vars = array(
-		'id' => 'forum-reply-edit-form-' . $reply->guid,
-		'class' => 'forum-reply-edit-form',
-		'name' => 'forum-reply-edit-form',
-	);
-		
-	$body_vars = forums_prepare_reply_form_vars(NULL, $reply->topic_guid, $reply->guid);
+		// Reply form vars
+		$form_vars = array(
+			'id' => 'forum-reply-edit-form-' . $reply->guid,
+			'class' => 'forum-reply-edit-form',
+			'name' => 'forum-reply-edit-form',
+		);
 
-	$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
+		$body_vars = forums_prepare_reply_form_vars(NULL, $reply->topic_guid, $reply->guid);
+
+		$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
+	}
+
 	$content .= elgg_view('forums/replies', $vars);
 
 	$content = elgg_view_module('featured', $title, $content, array(
