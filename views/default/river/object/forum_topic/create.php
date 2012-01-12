@@ -29,7 +29,7 @@ $forum_link = elgg_view('output/url', array(
 
 $summary = elgg_echo('river:create:object:forum_topic', array($owner_link, $topic_link, $forum_link));
 
-echo elgg_view('river/item', array(
+echo elgg_view('river/elements/layout', array(
 	'item' => $vars['item'],
 	'summary' => $summary,
 ));
