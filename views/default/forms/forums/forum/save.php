@@ -108,7 +108,6 @@ HTML;
 	$moderator_label = elgg_echo('forums:label:moderators');
 	$moderator_input = elgg_view('input/userpicker', array(
 		'id' => 'moderator-picker',
-		'name' => 'moderators',
 		'value' => $moderators
 	));
 }
