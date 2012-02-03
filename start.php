@@ -325,6 +325,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' =>  elgg_echo('forums:label:anonymous'),
 			'href' => FALSE,
 			'priority' => 100,
+			'section' => 'info',
 		);
 		$return[] = ElggMenuItem::factory($options);
 	}
@@ -356,6 +357,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:topiccount', array($topic_count)),
 			'priority' => 2,
 			'href' => FALSE,
+			'section' => 'info',
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -364,6 +366,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:replycount', array($reply_count)),
 			'priority' => 3,
 			'href' => FALSE,
+			'section' => 'info',
 		);
 		$return[] = ElggMenuItem::factory($options);
 	}
@@ -387,6 +390,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:replycount', array($count)),
 			'priority' => 3,
 			'href' => FALSE,
+			'section' => 'info',
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -399,6 +403,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 					'priority' => 1,
 					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=open",
 					'confirm' => elgg_echo('forums:label:openconfirm'),
+					'section' => 'actions',
 				);
 			} else {
 				$options = array(
@@ -407,6 +412,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 					'priority' => 1,
 					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=closed",
 					'confirm' => elgg_echo('forums:label:closeconfirm'),
+					'section' => 'actions',
 				);
 			}
 			$return[] = ElggMenuItem::factory($options);
@@ -419,6 +425,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'text' => elgg_echo('forums:label:closed'),
 				'priority' => 2,
 				'href' => FALSE,
+				'section' => 'info',
 			);
 
 			$return[] = ElggMenuItem::factory($options);
