@@ -27,6 +27,4 @@ elgg.forums.init = function() {
 	});
 }
 
-
 elgg.register_hook_handler('init', 'system', elgg.forums.init);
-//</script>
