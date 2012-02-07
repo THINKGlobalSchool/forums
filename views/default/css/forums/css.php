@@ -64,6 +64,7 @@
 .forum-topic .forum-reply-subtext {
 	text-transform: none;
 	float: left;
+	margin-top: 2px;
 }
 
 .forum-topic .forum-reply-description {
@@ -131,7 +132,7 @@
 
 .forum-reply-module > .elgg-head {
     background-color: #666;
-    padding: 4px 1px 0px 4px;
+    padding: 4px 1px 3px 4px;
 }
 
 .forum-reply-module > .elgg-head * {

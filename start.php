@@ -290,11 +290,6 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 
 	if ($subtype == 'forum' || $subtype == 'forum_topic' || $subtype == 'forum_reply') {
 		foreach($return as $idx => $item) {
-			// Remove likes
-			if ($item->getName() == 'likes') {
-				unset($return[$idx]);
-			}
-
 			// Remove access for forum topics and forum replies
 			if (($subtype == 'forum_topic' || $subtype =='forum_reply') && $item->getName() == 'access') {
 				unset($return[$idx]);
@@ -332,6 +327,13 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 
 	// Count topics/replies for forum listing
 	if ($subtype == 'forum') {
+		foreach($return as $idx => $item) {
+			// Remove likes
+			if ($item->getName() == 'likes') {
+				unset($return[$idx]);
+			}
+		}
+		
 		$topic_count = elgg_get_entities(array(
 			'type' => 'object',
 			'subtype' => 'forum_topic',
