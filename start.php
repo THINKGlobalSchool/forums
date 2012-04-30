@@ -34,9 +34,11 @@ function forums_init() {
 	elgg_register_simplecache_view('js/forums/forums');
 	elgg_register_js('elgg.forums', $f_js);
 
-	// Add main menu item
-	$item = new ElggMenuItem('forums', elgg_echo('forums'), 'forums/all');
-	elgg_register_menu_item('site', $item);
+	// Add main menu item for logged in users
+	if (elgg_is_logged_in()) {
+		$item = new ElggMenuItem('forums', elgg_echo('forums'), 'forums/all');
+		elgg_register_menu_item('site', $item);
+	}
 
 	// Register page handler
 	elgg_register_page_handler('forums','forums_page_handler');
@@ -588,5 +590,6 @@ function forums_read_access_handler($hook, $type, $value, $params) {
 	if (!$user->is_parent) {
 		$value[] = ACCESS_ANONYMOUS;
 	}
+
 	return $value;
 }
