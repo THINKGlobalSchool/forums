@@ -114,7 +114,7 @@ function forums_page_handler($page) {
 			group_gatekeeper();
 			$guid = elgg_get_page_owner_guid();
 			if (elgg_instanceof($group = get_entity($guid), 'group')
-			&& (elgg_is_admin_logged_in() || $group->getOwnerEntity() == elgg_get_logged_in_user_entity())) {
+			&& (elgg_is_admin_logged_in() || $group->canWriteToContainer())) {
 				$params = forums_get_page_content_forum_edit($page[0], $guid);
 			} else {
 				// Not a group, or no permission
