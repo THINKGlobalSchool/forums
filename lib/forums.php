@@ -86,7 +86,7 @@ function forums_get_page_content_list($container_guid = NULL) {
 		elgg_push_breadcrumb($group->name);
 
 		// Only show add forum button for the group owner or admins
-		if (elgg_is_admin_logged_in() || $group->getOwnerEntity() == elgg_get_logged_in_user_entity()) {
+		if (elgg_is_admin_logged_in() || $group->canWriteToContainer()) {
 			elgg_register_title_button();
 		}
 		$params['title'] = elgg_echo('forums:title:ownerforums', array($group->name));
@@ -415,7 +415,7 @@ function forums_is_moderator($user, $forum) {
 	}
 
 	if ($user->isAdmin()
-		|| (elgg_instanceof($container, 'group') && ($container->getOwnerEntity() == $user ||  in_array($user->guid, $group_moderators)))
+		|| (elgg_instanceof($container, 'group') && ($forum->canEdit($user->guid) ||  in_array($user->guid, $group_moderators)))
 		|| roles_is_member($forum->moderator_role, $user->guid))
 	{
 		return TRUE;
