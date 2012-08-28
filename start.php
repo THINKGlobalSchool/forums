@@ -12,6 +12,7 @@
  */
 
 elgg_register_event_handler('init', 'system', 'forums_init');
+elgg_register_event_handler('ready', 'system', 'forums_ready');
 
 function forums_init() {
 	// Relationship definitions
@@ -52,7 +53,7 @@ function forums_init() {
 	// Add submenus
 	elgg_register_event_handler('pagesetup', 'system', 'forums_submenus');
 
-	// add the group foruns tool option
+	// add the group forums tool option
 	add_group_tool_option('forums', elgg_echo('groups:enableforums'), TRUE);
 
 	// Profile block hook
@@ -97,6 +98,11 @@ function forums_init() {
 	elgg_register_action('forums/forum_topic/status', "$action_base/forum_topic/status.php");
 
 	return TRUE;
+}
+
+// Forums ready handler
+function forums_ready() {
+	remove_group_tool_option('forum');
 }
 
 /**
