@@ -71,8 +71,8 @@ $english = array(
 	'forums:label:closeddesc' => 'This topic has been closed by a moderator',
 
 	// River
-	'river:create:object:forum_reply' => '%s posted a reply to the topic %s in the forum %s',
-	'river:create:object:forum_topic' => '%s created a new topic titled %s in the forum %s',
+	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',
+	'river:create:object:forum_topic_river' => '%s created a new topic titled %s in the forum %s',
 
 	// Messages
 	'forums:error:requiredfields' => 'One or more required fields are missing',
