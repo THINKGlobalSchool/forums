@@ -80,8 +80,6 @@ ___HTML;
 		'subtitle' => $subtitle,
 	);
 	
-
-	
 	$body = elgg_view('object/elements/summary', $params);
-	echo elgg_view_image_block('', $body);
+	echo "<div class='forum'>" . elgg_view_image_block('', $body) . "</div>";
 }
