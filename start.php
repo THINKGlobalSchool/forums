@@ -29,6 +29,7 @@ function forums_init() {
 	$f_css = elgg_get_simplecache_url('css', 'forums/css');
 	elgg_register_simplecache_view('css/forums/css');
 	elgg_register_css('elgg.forums', $f_css);
+	elgg_load_css('elgg.forums');
 
 	// Register JS libraries
 	$f_js = elgg_get_simplecache_url('js', 'forums/forums');
@@ -110,7 +111,6 @@ function forums_ready() {
  */
 function forums_page_handler($page) {
 	gatekeeper(); // Logged in only
-	elgg_load_css('elgg.forums');
 	elgg_load_js('elgg.forums');
 	
 	elgg_push_breadcrumb(elgg_echo('forums:label:siteforums'), elgg_get_site_url() . "forums/all");

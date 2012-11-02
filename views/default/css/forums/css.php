@@ -15,6 +15,11 @@
 	
 }
 
+.forum > .elgg-image-block > .elgg-body > .elgg-content {
+	margin-left: 0;
+	margin-top: 14px;
+}
+
 .forum .forum-description {
 	font-size: 12px;
 	color: #222;
