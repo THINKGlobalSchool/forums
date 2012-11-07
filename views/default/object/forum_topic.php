@@ -52,8 +52,14 @@ if ($full) {
 	));
 
 	if ($forum->anonymous) {
-		$mask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
-		$author_text = elgg_echo('forums:label:topicstartedby', array($mask));
+		if (forums_is_moderator($owner, $forum)) {
+			// If owner of topic is a moderator, display a mask
+			$mask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+			$author_text = elgg_echo('forums:label:topicstartedby', array($mask));
+		} else {
+			$author_text = elgg_echo('forums:label:topicstartedby', array(elgg_echo('forums:label:anonymous')));
+		}
+		
 	} else {
 		$author_text = elgg_echo('forums:label:topicstartedby', array($owner_link));
 	}

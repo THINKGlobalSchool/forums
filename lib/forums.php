@@ -380,18 +380,265 @@ function forums_get_topic_replies($topic, array $options = array()) {
  * @param ElggEntity $reply the reply
  * @return ElggEntity the reply/topic
  */
-function forums_get_reply_parent($reply) {
+function forums_get_reply_parent($reply) {;
 	$options = array(
 		'type' => 'object',
+		'subtypes' => ELGG_ENTITIES_ANY_VALUE,
 		'limit' => 1,
-		'container_guid' => $reply->container_guid,
-		'relationship' => FORUM_REPLY_RELATIONSHIP, 
+		'relationship' => 'forum_reply_to', 
 		'relationship_guid' => $reply->guid, 
 		'inverse_relationship' => FALSE,
 	);
 
 	$entities = elgg_get_entities_from_relationship($options);
 	return $entities[0];
+}
+
+/**
+ * Notify necessary users that a new topic has been posted to a forum
+ *
+ * Group Forums:
+ * - Notifies forum owner
+ * - Notifies designated moderators
+ * - Group owner
+ * 
+ * Site Forums:
+ * - Notifies users who are members of the moderator role
+ * 
+ * @param ElggEntity $topic The forum topic
+ * @return bool
+ */
+function forums_notify_new_topic($topic) {
+	// Sanity check
+	if (!elgg_instanceof($topic, 'object', 'forum_topic')) {
+		return FALSE;
+	}
+
+	// Grab the forum
+	$forum = $topic->getContainerEntity();
+	
+	// User who made the post
+	$poster = elgg_get_logged_in_user_entity();
+
+	// Get forum owners/moderators
+	$notify_users = forums_get_owner_moderator_notify_list($forum);
+
+	// Notify Users
+	foreach ($notify_users as $n) {
+		// Don't send a notification to the poster regardless of moderator/owner
+		if ($n != $poster->guid) {
+			
+			// Determine sender from info
+			$sender_info = forums_get_notification_sender_info($forum, $poster);
+
+			$sender_guid = $sender_info['guid'];
+			$sender_name = $sender_info['name'];
+			
+			notify_user(
+				$n,
+				$sender_guid,
+				elgg_echo('forums:new_topic:subject', array(
+					$forum->title,
+				)),
+				elgg_echo('forums:new_topic:body', array(
+					$sender_name,
+					$forum->title,
+					$topic->title,
+					$topic->getURL()
+				))
+			);
+		}
+	}
+	return TRUE;
+}
+
+/**
+ * Notify necessary users that there is a new forum reply
+ *
+ * Notifies: 
+ * - Topic owner (when replying directly to a topic, or a reply) 
+ * - Reply owner 
+ * - Forum moderators (designated by group, or moderator role)
+ * - Forum owner
+ * - Group owner
+ * 
+ * @param ElggEntity $reply The forum reply
+ * @return bool
+ */
+function forums_notify_new_reply($reply) {
+	// Sanity check
+	if (!elgg_instanceof($reply, 'object', 'forum_reply')) {
+		return FALSE;
+	}
+	
+	// Get the reply or topic this was in response to
+	$parent = forums_get_reply_parent($reply);
+	
+	// Get topic this was posted in
+	$topic = get_entity($reply->topic_guid);
+	
+	// Grab the forum
+	$forum = $reply->getContainerEntity();
+	
+	// User who made the post
+	$poster = elgg_get_logged_in_user_entity();
+
+	// Get forum owners/moderators
+	$notify_users = forums_get_owner_moderator_notify_list($forum);
+
+	// Notify the topic ownner
+	$notify_users[] = $topic->owner_guid;
+
+	// If the parent object isn't the topic, it's a reply so notify both
+	if ($parent->owner_guid != $topic->owner_guid) {
+		$notify_users[] = $parent->owner_guid;
+	}
+
+	// Flush out dupes
+	$notify_users = array_unique($notify_users);
+
+	// Notify Users
+	foreach ($notify_users as $n) {
+		// Don't send a notification to the poster
+		if ($n != $poster->guid) {
+			// Determine sender from info
+			$sender_info = forums_get_notification_sender_info($forum, $poster);
+
+			$sender_guid = $sender_info['guid'];
+			$sender_name = $sender_info['name'];
+
+			// If replying to a topic, or sending notification to an owner/moderator
+			if (elgg_instanceof($parent, 'object', 'forum_topic') || $n != $parent->owner_guid) {
+			
+				notify_user(
+					$n,
+					$sender_guid,
+					elgg_echo('forums:new_reply_topic:subject', array(
+						$topic->title,
+						$forum->title,
+					)),
+					elgg_echo('forums:new_reply_topic:body', array(
+						$sender_name,
+						$topic->title,
+						$forum->title,
+						$reply->description,
+						$topic->getURL() . "#forum-reply-{$reply->guid}",
+					))
+				);
+			} else {
+				// Send a more personal message to the owner of the reply
+				notify_user(
+					$n,
+					$sender_guid,
+					elgg_echo('forums:new_reply_user:subject', array(
+						$forum->title,
+					)),
+					elgg_echo('forums:new_reply_user:body', array(
+						$sender_name,
+						$topic->title,
+						$forum->title,
+						$reply->description,
+						$topic->getURL() . "#forum-reply-{$reply->guid}",
+					))
+				);
+			}
+		}
+	}
+	return TRUE;
+}
+
+/**
+ * Helper function to generate a list of users to provide 
+ * notifications to when posting content to a forum
+ * 
+ * @param ElggEntity $forum
+ * @return mixed
+ */
+function forums_get_owner_moderator_notify_list($forum) {
+	// Make sure we have a valid forum
+	if (!elgg_instanceof($forum, 'object', 'forum')) {
+		return FALSE;
+	}
+
+	// Notification users depends on wether or not this is a site forum
+	if ($forum->site_forum) {	/** This is a 'site' forum (Created by an admin)**/
+		// Get moderator role
+		$moderator_role = get_entity($forum->moderator_role);
+		
+		// Get moderator role members
+		$members = $moderator_role->getMembers(0);
+
+		// Notify list
+		$notify_users = array();
+
+		// Add each member to the notify list
+		foreach ($members as $m) {
+			$notify_users[] = $m->guid;
+		}
+	} else {	/** This is a group forum, created by a member/owner of a group **/
+		// Grab the group
+		$group = $forum->getContainerEntity();
+		
+		// Set up initial notify list
+		$notify_users = array(
+			$forum->owner_guid,	// Forum owner
+			$group->owner_guid,	// Group owner
+		);
+
+		// Get moderators if any
+		if ($moderators = $forum->moderators) {
+			// Make sure we have an array
+			if (!is_array($moderators)) {
+				$moderators = array($moderators);
+			} 
+
+			foreach ($moderators as $mod) {
+				if (get_user($mod)) {
+					// Add user to notify list
+					$notify_users[] = $mod;
+				}
+			}
+		}
+	}
+	// Make sure we don't have dupes (forum owner could also be a moderator, or group owner)
+	$notify_users = array_unique($notify_users);
+	return $notify_users;
+}
+
+/**
+ * Get sender info for forum notifications. 
+ * 
+ * - If forum is anonymous, this will determine if the user is a moderator
+ * and return either anonymous or the forum's moderator mask
+ *
+ * @param  ElggEntity $forum  The forum we're sending a notification for
+ * @param  ElggUser   $poster The user we're sending a notification from
+ * @return array
+ */
+function forums_get_notification_sender_info($forum, $poster) {
+	// If the forum is anonymous
+	if ($forum->anonymous) {
+		// We need to send from the site to hide the owner
+		$sender_guid = elgg_get_site_entity()->guid;
+		
+		// Check if the sender is a moderator for this forum
+		if (forums_is_moderator($poster, $forum)) {
+			// Sender name is the defined moderator mask
+			$sender_name = $forum->moderator_mask;
+		} else {
+			// Sender name is plain old anonymous
+			$sender_name = elgg_echo('forums:label:anonymous');
+		}
+	} else {
+		//  Not anonymous, use real info
+		$sender_guid = $poster->guid;
+		$sender_name = $poster->name;
+	}
+	
+	return array(
+		'guid' => $sender_guid,
+		'name' => $sender_name,
+	);
 }
 
 /**

@@ -37,7 +37,7 @@ if (!$guid) {
 	$topic = new ElggObject();
 	$topic->subtype = 'forum_topic';
 	$topic->access_id = $forum->access_id;
-	$topic->container_guid = $container_guid;
+	$topic->container_guid = $container_guid;	
 } else { // Editing
 	$topic = get_entity($guid);
 	if (!elgg_instanceof($topic, 'object', 'forum_topic')) {
@@ -62,6 +62,9 @@ if (!$topic->save()) {
 
 // If we're creating a new topic, create the initial reply from this topics description
 if (!$guid) {
+	// Notify users
+	forums_notify_new_topic($topic);
+
 	$reply = new ElggObject();
 	$reply->subtype = 'forum_reply';
 	$reply->access_id = $topic->access_id;
