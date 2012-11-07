@@ -100,6 +100,40 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 	'forums:success:forum_topic:open' => 'Topic opened',
 	'forums:success:forum_topic:closed' => 'Topic closed',
+	
+	// New Forum Topic Notification
+	'forums:new_topic:subject' => 'New topic in Spot forum "%s"',
+	'forums:new_topic:body' => "%s has posted a new topic on the forum \"%s\" titled \"%s\"
+
+To reply to or view the topic, click here:
+
+%s
+",
+	// New Forum Reply to Topic Notification
+	'forums:new_reply_topic:subject' => 'New reply in topic "%s" in Spot forum "%s"',
+	'forums:new_reply_topic:body' => "%s has posted a reply in topic \"%s\" in the forum \"%s\"
+	
+It reads:
+
+%s
+
+To reply to this or view the topic, click here:
+
+%s
+",
+
+	// Reply to reply object (to replies owner) notification
+	'forums:new_reply_user:subject' => 'New reply to your post in Spot forum "%s"',
+	'forums:new_reply_user:body' => "%s has replied to your post in the topic \"%s\" in Spot forum \"%s\"
+	
+It reads:
+
+%s
+
+To reply to this or view the topic, click here:
+
+%s
+",
 
 	// Other content
 	'groups:enableforums' => 'Enable group forums',

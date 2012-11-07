@@ -71,11 +71,14 @@ if (!$guid) {
 		register_error(elgg_echo('forums:error:forum_topic:invalid'));
 		forward(REFERER);
 	}
-
+	
 	// This states that: 'reply' is a forum_reply_to 'reply/topic' 
 	add_entity_relationship($reply->guid, FORUM_REPLY_RELATIONSHIP, $reply_to->guid);
 
-	// Add river entry if we're posting in an anonymous forum
+	// Notify users of new reply
+	forums_notify_new_reply($reply);
+
+	// Add river entry if we're not posting in an anonymous forum
 	if (!$reply->getContainerEntity()->anonymous) {
 		add_to_river('river/object/forum_reply/create', 'create', elgg_get_logged_in_user_guid(), $reply->guid);
 	}
