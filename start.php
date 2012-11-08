@@ -58,7 +58,7 @@ function forums_init() {
 	add_group_tool_option('forums', elgg_echo('groups:enableforums'), TRUE);
 
 	// Profile block hook
-	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'forums_owner_block_menu');
+	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'forums_owner_block_menu', 999);
 
 	// Register a handler for deleting topics
 	elgg_register_event_handler('delete', 'object', 'forums_topic_delete_event_listener');
@@ -559,6 +559,12 @@ function forums_owner_block_menu($hook, $type, $value, $params) {
 			$url = "forums/group/{$params['entity']->guid}/all";
 			$item = new ElggMenuItem('forums', elgg_echo('forums:label:groupforums'), $url);
 			$value[] = $item;
+		}
+		
+		foreach ($value as $idx => $item) {
+			if ($item->getName() == 'discussion') {
+				unset($value[$idx]);
+			}
 		}
 	}
 	return $value;
