@@ -110,13 +110,13 @@ function forums_ready() {
  * Forum page handler
  */
 function forums_page_handler($page) {
-	gatekeeper(); // Logged in only
 	elgg_load_js('elgg.forums');
 	
 	elgg_push_breadcrumb(elgg_echo('forums:label:siteforums'), elgg_get_site_url() . "forums/all");
 	
 	switch($page[0]) {
 		case 'add':
+			gatekeeper();
 			group_gatekeeper();
 			$guid = elgg_get_page_owner_guid();
 			if (elgg_instanceof($group = get_entity($guid), 'group')
@@ -142,6 +142,7 @@ function forums_page_handler($page) {
 		case 'forum':
 			switch ($page[1]) {
 				case 'edit':
+					gatekeeper();
 					$forum = get_entity($page[2]);
 					if ($forum && elgg_instanceof($forum->getContainerEntity(), 'group')) {
 						elgg_set_page_owner_guid($forum->getContainerGUID());
@@ -184,10 +185,12 @@ function forums_page_handler($page) {
 			// Handle topics
 			switch ($page[1]) {
 				case 'add':
+					gatekeeper();
 					group_gatekeeper();
 					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
 					break;
 				case 'edit':
+					gatekeeper();
 					group_gatekeeper();
 					$params = forums_get_page_content_topic_edit($page[1], $page[2]);
 					break;
@@ -201,9 +204,10 @@ function forums_page_handler($page) {
 			}
 			break;
 		case 'forum_reply':
-			// Handle topics
+			// Handle replies
 			switch ($page[1]) {
 				case 'edit':
+					gatekeeper();
 					$params = forums_get_page_content_reply_edit($page[2]);
 					break;
 				default:
@@ -581,7 +585,6 @@ function forums_owner_block_menu($hook, $type, $value, $params) {
  */
 function forums_access_id_handler($hook, $type, $value, $params) {
 	if (elgg_in_context('group_forum_access')) {
-		unset($value[ACCESS_PUBLIC]); // Remove public
 		unset($value[ACCESS_PRIVATE]); // Remove private
 	}
 	return $value;
@@ -597,6 +600,9 @@ function forums_access_id_handler($hook, $type, $value, $params) {
  * @return unknown
  */
 function forums_read_access_handler($hook, $type, $value, $params) {
+	if (!elgg_is_logged_in()) {
+		return $value;
+	}
 	$user = elgg_get_logged_in_user_entity();
 
 	if (!$user->is_parent) {

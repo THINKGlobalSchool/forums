@@ -81,6 +81,12 @@ $forum->anonymous = $anonymous;
 $forum->moderator_role = $moderator_role;
 $forum->moderators = $moderators;
 $forum->moderator_mask = $moderator_mask;
+
+// If access ID has changed, we need to update topics/replies as well
+if ($access_id != $forum->access_id) {
+	$update_children = TRUE;
+}
+
 $forum->access_id = $access_id;
 
 // Try saving
@@ -89,6 +95,23 @@ if (!$forum->save()) {
 	register_error(elgg_echo('forums:error:forum:save'));
 	forward(REFERER);
 }
+
+
+// Update child entities access
+if ($update_children) {
+	$options = array(
+		'type' => 'object',
+		'subtypes' => array('forum_topic', 'forum_reply'),
+		'container_guid' => $forum->guid,
+	);
+
+	$children = new ElggBatch('elgg_get_entities', $options);
+	
+	foreach ($children as $child) {
+		$child->access_id = $access_id;
+	}
+}
+
 
 // Clear Sticky form
 elgg_clear_sticky_form('forum-edit-form');

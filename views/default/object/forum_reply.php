@@ -71,8 +71,8 @@ if ($full) {
 		'value' => $reply->description
 	)) . "</div>";
 
-	// No replying to closed topics
-	if ($topic->topic_status != 'closed') {
+	// Logged in and open topics only
+	if (elgg_is_logged_in() && $topic->topic_status != 'closed') {
 		$content .= elgg_view('output/url', array(
 			'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytothis"),
 			'href' => '#forum-reply-edit-form-' . $reply->guid,
