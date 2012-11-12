@@ -40,14 +40,16 @@ if ($full_view) {
 	$topics_title = elgg_echo('forums:title:topics');
 	$topics_list = elgg_view('forums/topics', $vars);
 	
-	$topic_new = elgg_view('output/url', array(
-		'name' => 'forums-create-topic',
-		'id' => 'forums-create-topic',
-		'class' => 'elgg-button elgg-button-submit',
-		'href' => elgg_get_site_url() . 'forums/forum_topic/add/' . $forum->guid,
-		'text' => elgg_echo('forums:label:newtopic'),
-	));
-	
+	if (elgg_is_logged_in()) {
+		$topic_new = elgg_view('output/url', array(
+			'name' => 'forums-create-topic',
+			'id' => 'forums-create-topic',
+			'class' => 'elgg-button elgg-button-submit',
+			'href' => elgg_get_site_url() . 'forums/forum_topic/add/' . $forum->guid,
+			'text' => elgg_echo('forums:label:newtopic'),
+		));
+	}
+
 	echo <<<___HTML
 		<div class="forum">
 			$summary

@@ -650,6 +650,9 @@ function forums_get_notification_sender_info($forum, $poster) {
  * @return bool
  */
 function forums_is_moderator($user, $forum) {
+	if (!elgg_is_logged_in()) {
+		return FALSE;
+	}
 	// Grab container to check for group
 	$container = $forum->getContainerEntity();
 
