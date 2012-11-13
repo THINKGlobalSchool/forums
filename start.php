@@ -501,7 +501,7 @@ function forums_reply_delete_event_listener($event, $object_type, $object) {
  * @param unknown_type $params
  */
 function forums_container_write_permission_check($hook, $type, $value, $params) {
-	if ($params['container']->getSubtype() == 'forum') {
+	if ($params['container'] && $params['container']->getSubtype() == 'forum') {
 		return TRUE; // Anyone can write to forum containers
 	}
 }
