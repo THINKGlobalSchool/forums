@@ -100,6 +100,11 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 	'forums:success:forum_topic:open' => 'Topic opened',
 	'forums:success:forum_topic:closed' => 'Topic closed',
+
+	// New forum notification (for groups or subscribed)
+	'forums:new_forum:subject' => 'New Forum',
+	'forums:new_forum:body' => "%s created a new forum titled: %s\n\n%s\n\nTo create a topic or view this forum, click here:\n%s
+",
 	
 	// New Forum Topic Notification
 	'forums:new_topic:subject' => 'New topic in Spot forum "%s"',

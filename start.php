@@ -83,6 +83,10 @@ function forums_init() {
 
 	elgg_register_plugin_hook_handler('access:collections:read', 'user', 'forums_read_access_handler');
 
+	// notifications
+	register_notification_object('object', 'forum', elgg_echo('forums:new_forum:subject'));
+	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'new_forum_notify_message');
+
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
 	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
@@ -610,4 +614,31 @@ function forums_read_access_handler($hook, $type, $value, $params) {
 	}
 
 	return $value;
+}
+
+/**
+ * Set the notification message for forums
+ * 
+ * @param string $hook    Hook name
+ * @param string $type    Hook type
+ * @param string $message The current message body
+ * @param array  $params  Parameters about the blog posted
+ * @return string
+ */
+function new_forum_notify_message($hook, $type, $message, $params) {
+	$entity = $params['entity'];
+	$to_entity = $params['to_entity'];
+	$method = $params['method'];
+	if (elgg_instanceof($entity, 'object', 'forum')) {
+		$descr = $entity->description;
+		$title = $entity->title;
+		$owner = $entity->getOwnerEntity();
+		return elgg_echo('forums:new_forum:body', array(
+			$owner->name,
+			$title,
+			$descr,
+			$entity->getURL()
+		));
+	}
+	return null;
 }
