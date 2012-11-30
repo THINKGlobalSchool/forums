@@ -165,7 +165,9 @@ function forums_page_handler($page) {
 			$entity = get_entity($page[2]);
 
 			if (!elgg_instanceof($entity, 'object', 'forum') && !elgg_instanceof($entity, 'object', 'forum_topic')) {
-				forward('forums');
+				register_error(elgg_echo('noaccess'));
+				$_SESSION['last_forward_from'] = current_page_url();
+				forward('');
 			}
 
 			// Get the container of the forum
