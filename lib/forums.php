@@ -20,47 +20,42 @@ function forums_get_page_content_view($guid) {
 		//'layout' => 'one_column',
 	);
 
-	if (elgg_entity_exists($guid)) {
-		$entity = get_entity($guid);
-		if (elgg_instanceof($entity, 'object', 'forum')
-			|| elgg_instanceof($entity, 'object', 'forum_topic')
-			|| elgg_instanceof($entity, 'object', 'forum_reply')) 
-		{
-			$params['title'] = $entity->title;
-			$params['content'] = elgg_view_entity($entity, array('full_view' => TRUE));
-			
-			if ($entity->getSubtype() == 'forum') {
-				$container = $entity->getContainerEntity();
-			} else if ($entity->getSubtype() == 'forum_topic') {
-				$forum = $entity->getContainerEntity();
-				$container = $forum->getContainerEntity();
-			}
-			
-			// We don't want to see the admin user's owner badge, unless the forum was created by a group
-			if (elgg_instanceof($container, 'group')) {
-				elgg_set_page_owner_guid($container->guid);
-				elgg_push_breadcrumb($container->name, "forums/group/{$container->guid}/all");
-			} else {
-				elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
-			}
-
-			// If we're looking at a topic, show the forum breadcrumb
-			if ($forum) {
-				elgg_push_breadcrumb($forum->title, $forum->getURL());
-			}
-
-			elgg_push_breadcrumb($entity->title);
-
-			return $params;
-		} else {
-			// Most likely a permission issue here
-			register_error(elgg_echo('forums:error:permissiondenied'));
-			forward();
+	$entity = get_entity($guid);
+	if (elgg_instanceof($entity, 'object', 'forum')
+		|| elgg_instanceof($entity, 'object', 'forum_topic')
+		|| elgg_instanceof($entity, 'object', 'forum_reply')) 
+	{
+		$params['title'] = $entity->title;
+		$params['content'] = elgg_view_entity($entity, array('full_view' => TRUE));
+		
+		if ($entity->getSubtype() == 'forum') {
+			$container = $entity->getContainerEntity();
+		} else if ($entity->getSubtype() == 'forum_topic') {
+			$forum = $entity->getContainerEntity();
+			$container = $forum->getContainerEntity();
 		}
+		
+		// We don't want to see the admin user's owner badge, unless the forum was created by a group
+		if (elgg_instanceof($container, 'group')) {
+			elgg_set_page_owner_guid($container->guid);
+			elgg_push_breadcrumb($container->name, "forums/group/{$container->guid}/all");
+		} else {
+			elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
+		}
+
+		// If we're looking at a topic, show the forum breadcrumb
+		if ($forum) {
+			elgg_push_breadcrumb($forum->title, $forum->getURL());
+		}
+
+		elgg_push_breadcrumb($entity->title);
+
+		return $params;
+	} else {
+		register_error(elgg_echo('noaccess'));
+		$_SESSION['last_forward_from'] = current_page_url();
+		forward('');
 	}
-	
-	$params['content'] = elgg_echo('forums:error:notfound');
-	return $params;
 }
 
 /**
