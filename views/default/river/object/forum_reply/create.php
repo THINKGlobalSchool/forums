@@ -15,7 +15,7 @@ $excerpt = elgg_get_excerpt($excerpt);
 
 // Custom summary
 $owner = $object->getOwnerEntity();
-$owner_link = "<a href='" . $owner->getURL . "'>" . $owner->name . "</a>";
+$owner_link = "<a href='" . $owner->getURL() . "'>" . $owner->name . "</a>";
 
 $topic = get_entity($object->topic_guid);
 $forum = $object->getContainerEntity();
