@@ -13,7 +13,7 @@ $object = $vars['item']->getObjectEntity();
 
 // Custom summary
 $owner = $object->getOwnerEntity();
-$owner_link = "<a href='" . $owner->getURL . "'>" . $owner->name . "</a>";
+$owner_link = "<a href='" . $owner->getURL() . "'>" . $owner->name . "</a>";
 
 $forum = $object->getContainerEntity();
 
