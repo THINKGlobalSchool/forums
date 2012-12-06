@@ -20,9 +20,11 @@ elgg.forums.init = function() {
 		if($(this).val() == '1') {
 			$('#anonymous-container').show();
 			$('#access-container').hide();
+			$('#forum-tags-container').hide();
 		} else {
 			$('#anonymous-container').hide();
 			$('#access-container').show();
+			$('#forum-tags-container').show();
 		}
 	});
 }

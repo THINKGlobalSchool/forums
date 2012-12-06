@@ -255,6 +255,7 @@ function forums_prepare_forum_form_vars($forum = NULL) {
 		'moderators' => '',
 		'moderator_mask' => '',
 		'guid' => '',
+		'tags' => '',
 		'access_id' => ACCESS_LOGGED_IN,
 		'container_guid' => $container_guid,
 	);
@@ -667,4 +668,54 @@ function forums_is_moderator($user, $forum) {
 	} else {
 		return FALSE;
 	}
+}
+
+/**
+ * Merge tags from forum into topic
+ * 
+ * @param ElggEntity $forum
+ * @param ElggEntity $topic
+ * @return bool
+ */
+function merge_forum_and_topic_tags($forum, $topic) {
+	// Check for anonymous forum
+	if ($forum->anonymous) {
+		// Nuke topic tags, that's it.
+		$topic->tags = NULL;
+		return TRUE;
+	}
+
+
+	// Make sure the forum entity has tags
+	if ($forum_tags = $forum->tags) {
+
+		// Make sure forum tags is an array
+		if (!is_array($forum->tags)) {
+			$forum_tags = array($forum_tags);
+		}
+
+		$topic_tags = $topic->tags;
+
+		// Make sure topic tags is an array
+		if (!is_array($topic->tags)) {
+			if (!$topic_tags) {
+				$topic_tags = array();
+			} else {
+				$topic_tags = array($topic_tags);
+			}
+		}
+
+		// Merge forum and topic tags
+		$new_tags = array_merge($forum_tags, $topic_tags);
+
+		// Remove dupes
+		$new_tags = array_unique($new_tags);
+
+		// Update topic tags
+		$topic->tags = $new_tags;
+
+		return TRUE;
+	}
+
+	return FALSE;
 }

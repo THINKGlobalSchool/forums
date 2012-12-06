@@ -19,6 +19,7 @@ $moderators = get_input('members');	// Supplied if editing a group forum
 $moderator_mask = get_input('moderator_mask', FALSE);
 $container_guid = get_input('container_guid');
 $access_id = get_input('access_id', ACCESS_LOGGED_IN);
+$tags = string_to_tag_array(get_input('tags'));
 $guid = get_input('guid');
 
 // Check to make sure we can write to the container (for group owners)
@@ -46,6 +47,12 @@ if (!$guid) {
 	$forum->subtype = 'forum';
 	$forum->container_guid = $container_guid;
 
+	if (!$anonymous) {
+		$forum->tags = $tags;
+	}
+
+	$forum->anonymous = $anonymous;
+	
 	// Save some metadata to easily identify this as a site forum
 	if (!elgg_instanceof($container, 'group')) {
 		$forum->site_forum = TRUE;
@@ -58,6 +65,15 @@ if (!$guid) {
 		register_error(elgg_echo('forums:error:forum:edit'));
 		forward(REFERER);
 	}
+
+	// Set tags if not anonymous, nullify them otherwise
+	if (!$anonymous) {
+		$forum->tags = $tags;
+	} else {
+		$forum->tags = NULL;
+	}
+
+	$forum->anonymous = $anonymous;
 
 	// Get this forums topics and replies to update their access_id
 	$options = array(
@@ -72,12 +88,17 @@ if (!$guid) {
 	foreach ($contents as $content) {
 		$content->access_id = $access_id;
 		$content->save();
+
+		// Update topic tags
+		if ($content->getSubtype() == 'forum_topic') {
+			// Set topic tags
+			merge_forum_and_topic_tags($forum, $content);
+		}
 	}
 }
 
 $forum->title = $title;
 $forum->description = $description;
-$forum->anonymous = $anonymous;
 $forum->moderator_role = $moderator_role;
 $forum->moderators = $moderators;
 $forum->moderator_mask = $moderator_mask;

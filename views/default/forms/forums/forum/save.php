@@ -18,6 +18,7 @@ $anonymous = elgg_extract('anonymous', $vars, FALSE);
 $moderator_mask = elgg_extract('moderator_mask', $vars, FALSE);
 $access_id = elgg_extract('access_id', $vars);
 $container_guid = elgg_extract('container_guid', $vars, elgg_get_page_owner_guid());
+$tags = elgg_extract('tags', $vars, '');
 
 // Check if we've got an entity, if so, we're editing.
 if ($guid) {
@@ -71,7 +72,7 @@ $moderator_mask_input = elgg_view('input/text', array(
 	'value' => $moderator_mask,
 ));
 
-// If the container is a group, display  don't display the moderator role
+// If the container is a group, don't display the moderator role
 if (!elgg_instanceof($entity = get_entity($container_guid), 'group')) {
 	$moderator_role = elgg_extract('moderator_role', $vars, '');
 
@@ -112,14 +113,23 @@ HTML;
 	));
 }
 
+$tags_label = elgg_echo('tags');
+$tags_input = elgg_view('input/tags', array(
+	'name' => 'tags',
+	'value' => $tags
+));
+
 $submit_input = elgg_view('input/submit', array(
 	'name' => 'submit',
 	'value' => elgg_echo('save')
 ));
 
+if ($anonymous) {
+	$class = 'class="hidden"';
+}
+
 // Build Form Body
 $form_body = <<<HTML
-
 <div>
 	<div>
 		<label>$title_label</label><br />
@@ -145,6 +155,10 @@ $form_body = <<<HTML
 	<div>
 		<label>$moderator_label</label>
 		$moderator_input
+	</div><br />
+	<div id='forum-tags-container' $class>
+		<label>$tags_label</label><br />
+		$tags_input
 	</div><br />
 	<div class='elgg-foot'>
 		$submit_input
