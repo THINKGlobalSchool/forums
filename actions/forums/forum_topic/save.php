@@ -51,6 +51,8 @@ $topic->title = $title;
 // Make sure not to set any tags on anonymous posts
 if (!$topic->getContainerEntity()->anonymous) {
 	$topic->tags = $tags;
+} else {
+	$topic->tags = NULL;
 }
 
 // Try saving
@@ -59,6 +61,9 @@ if (!$topic->save()) {
 	register_error(elgg_echo('forums:error:forum_topic:save'));
 	forward(REFERER);
 }
+
+// Make sure topic tags contain the forum tags
+merge_forum_and_topic_tags($topic->getContainerEntity(), $topic);
 
 // If we're creating a new topic, create the initial reply from this topics description
 if (!$guid) {
