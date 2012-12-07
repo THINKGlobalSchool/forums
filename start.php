@@ -83,6 +83,12 @@ function forums_init() {
 
 	elgg_register_plugin_hook_handler('access:collections:read', 'user', 'forums_read_access_handler');
 
+	// Register forum topics as a type to check for the parent (forum) container's container in modules
+	elgg_register_plugin_hook_handler('check_parent_container', 'modules', 'forums_container_check_handler');
+
+	// Include forum topics when grabbing tagdashboard subtypes from metadata
+	elgg_register_plugin_hook_handler('tagdashboards:metadata:subtypes', 'container_check', 'forums_tagdashboard_metadata_subtype_handler');
+
 	// notifications
 	register_notification_object('object', 'forum', elgg_echo('forums:new_forum:subject'));
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'new_forum_notify_message');
@@ -617,6 +623,40 @@ function forums_read_access_handler($hook, $type, $value, $params) {
 
 	return $value;
 }
+
+/**
+ * If a forum subtype is being included in a tag module, we
+ * we want to check for forum topics as well
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_container_check_handler($hook, $type, $value, $params) {
+	if (in_array('forum', $params)) {
+		return TRUE;
+	}
+	return $value;
+}
+
+/**
+ * Include forum topics when grabbing tagdashboard subtypes from metadata
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_tagdashboard_metadata_subtype_handler($hook, $type, $value, $params) {
+	if (in_array('forum', $value)) {
+		$value[] = 'forum_topic';
+	}
+	return $value;
+}
+
 
 /**
  * Set the notification message for forums
