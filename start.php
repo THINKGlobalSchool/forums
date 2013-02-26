@@ -93,6 +93,13 @@ function forums_init() {
 	register_notification_object('object', 'forum', elgg_echo('forums:new_forum:subject'));
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'new_forum_notify_message');
 
+	// Unregister 'discussions'
+	unregister_entity_type('object', 'groupforumtopic');
+
+	// Register forums and forum topics
+	elgg_register_entity_type('object', 'forum');
+	elgg_register_entity_type('object', 'forum_topic');
+
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
 	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
