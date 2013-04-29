@@ -31,7 +31,7 @@ if ($full_view) {
 		'title' => FALSE,
 		'entity' => $forum,
 		'metadata' => $metadata,
-		'content' => "<div class='forum-description'>" . $forum->description  . "</div>",
+		'content' => elgg_view('output/longtext', array('value' => $forum->description, 'class' => 'forum-description'))
 	);
 	
 	$body = elgg_view('object/elements/summary', $params);
