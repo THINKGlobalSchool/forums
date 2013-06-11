@@ -229,6 +229,12 @@ function forums_page_handler($page) {
 					gatekeeper();
 					$params = forums_get_page_content_reply_edit($page[2]);
 					break;
+				case 'view':
+					$reply = get_entity($page[2]);
+					$topic = get_entity($reply->topic_guid);
+					if (elgg_instanceof($reply, 'object', 'forum_reply') && elgg_instanceof($topic, 'object', 'forum_topic')) {
+						forward($topic->getURL() . '#forum-reply-' . $reply->guid);
+					}
 				default:
 					forward('forums/all');
 					break;
@@ -624,7 +630,7 @@ function forums_read_access_handler($hook, $type, $value, $params) {
 	}
 	$user = elgg_get_logged_in_user_entity();
 
-	if (!$user->is_parent) {
+	if (@!$user->is_parent) {
 		$value[] = ACCESS_ANONYMOUS;
 	}
 

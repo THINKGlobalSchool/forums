@@ -66,7 +66,6 @@ if ($full) {
 
 	$title = "<div class='elgg-subtext forum-reply-subtext'>$owner_link $dateline</div> $metadata";
 
-
 	$content = "<div class='forum-reply-description'>" . elgg_view('output/longtext', array(
 		'value' => $reply->description
 	)) . "</div>";
