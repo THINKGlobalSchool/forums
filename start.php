@@ -78,6 +78,9 @@ function forums_init() {
 	// Remove comments from forum related river entries
 	elgg_register_plugin_hook_handler('register', 'menu:river', 'forums_river_menu_setup');
 
+	// Change river subtype options for forums
+	elgg_register_plugin_hook_handler('get_options', 'river', 'forums_river_options_setup');
+
 	// Remove public from forum access array
 	elgg_register_plugin_hook_handler('access:collections:write', 'user', 'forums_access_id_handler');
 
@@ -98,7 +101,11 @@ function forums_init() {
 
 	// Register forums and forum topics
 	elgg_register_entity_type('object', 'forum');
-	elgg_register_entity_type('object', 'forum_topic');
+	// elgg_register_entity_type('object', 'forum_topic');
+	// elgg_register_entity_type('object', 'forum_reply');
+
+	// Unregister discussions
+	unregister_entity_type('object', 'groupforumtopic');
 
 	// Register URL handler
 	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
@@ -568,6 +575,24 @@ function forums_river_menu_setup($hook, $type, $value, $params) {
 		if (elgg_instanceof($object, 'object', 'forum_reply') || elgg_instanceof($object, 'object', 'forum_topic')) {
 			return array();
 		}
+	}
+
+	return $value;
+}
+
+/**
+ * Customize river options
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $type
+ * @param unknown_type $value
+ * @param unknown_type $params
+ * @return unknown
+ */
+function forums_river_options_setup($hook, $type, $value, $params) {
+	if ($value['subtype'] == 'forum' || $value['subtypes'] == 'forum') {
+		unset($value['subtype']);
+		$value['subtypes'] = array('forum', 'forum_topic', 'forum_reply');
 	}
 
 	return $value;
