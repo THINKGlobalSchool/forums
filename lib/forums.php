@@ -17,7 +17,6 @@
 function forums_get_page_content_view($guid) {
 	$params = array(
 		'filter' => '',
-		//'layout' => 'one_column',
 	);
 
 	$entity = get_entity($guid);
@@ -30,9 +29,13 @@ function forums_get_page_content_view($guid) {
 		
 		if ($entity->getSubtype() == 'forum') {
 			$container = $entity->getContainerEntity();
+
+			// Set layout to one_column if forum is anonymous
+			$params['layout'] = $entity->site_forum ? 'one_column' : 'one_sidebar';
 		} else if ($entity->getSubtype() == 'forum_topic') {
 			$forum = $entity->getContainerEntity();
 			$container = $forum->getContainerEntity();
+			$params['layout'] = $forum->site_forum ? 'one_column' : 'one_sidebar';
 		}
 		
 		// We don't want to see the admin user's owner badge, unless the forum was created by a group
