@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  * THIS PLUGIN NEEDS TO BE FIRST IN THE LIST
@@ -27,13 +27,11 @@ function forums_init() {
 
 	// Register CSS
 	$f_css = elgg_get_simplecache_url('css', 'forums/css');
-	elgg_register_simplecache_view('css/forums/css');
 	elgg_register_css('elgg.forums', $f_css);
 	elgg_load_css('elgg.forums');
 
 	// Register JS libraries
 	$f_js = elgg_get_simplecache_url('js', 'forums/forums');
-	elgg_register_simplecache_view('js/forums/forums');
 	elgg_register_js('elgg.forums', $f_js);
 
 	// Add main menu item for logged in users

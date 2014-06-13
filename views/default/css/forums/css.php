@@ -5,16 +5,12 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
 ?>
-
-.forum {
-	
-}
-
+/** <style> /**/
 .forum > .elgg-image-block > .elgg-body > .elgg-content {
 	margin-left: 0;
 	margin-top: 14px;
@@ -59,6 +55,7 @@
 	-webkit-border-radius: 10px 3px 3px 3px;
 	-moz-border-radius: 10px 3px 3px 3px;
 	border-radius: 10px 3px 3px 3px;
+	margin-top: 10px;
 }
 
 .forum-topic .forum-reply-icon {
