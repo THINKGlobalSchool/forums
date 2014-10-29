@@ -17,6 +17,8 @@ elgg_register_event_handler('ready', 'system', 'forums_ready');
 function forums_init() {
 	// Relationship definitions
 	define('FORUM_REPLY_RELATIONSHIP', 'forum_reply_to');
+	define('FORUM_TOPIC_PARTICIPANT_RELATIONSHIP', 'participating_in_topic');
+	define('FORUM_TOPIC_NO_NOTIFY_RELATIONSHIP', 'dont_notify_topic');
 
 	// Anonymous access definition
 	define('ACCESS_ANONYMOUS', -9887);
@@ -121,6 +123,7 @@ function forums_init() {
 	elgg_register_action('forums/forum_topic/delete', "$action_base/forum_topic/delete.php");
 	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
 	elgg_register_action('forums/forum_topic/status', "$action_base/forum_topic/status.php");
+	elgg_register_action('forums/forum_topic/setnotifications', "$action_base/forum_topic/setnotifications.php");
 
 	return TRUE;
 }
@@ -440,12 +443,32 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		);
 		$return[] = ElggMenuItem::factory($options);
 
+		// Opt-in/out of notifications
+		if (check_entity_relationship(elgg_get_logged_in_user_guid(), FORUM_TOPIC_PARTICIPANT_RELATIONSHIP, $entity->guid)) {
+			$opt_text = elgg_echo('forums:label:optout');
+			$opt_action = 0;
+		} else {
+			$opt_text = elgg_echo('forums:label:optin');
+			$opt_action = 1;
+		}
+
+		$options = array(
+			'name' => 'topic_opt',
+			'text' => $opt_text,
+			'priority' => 2,
+			'href' => elgg_add_action_tokens_to_url("action/forums/forum_topic/setnotifications?opt_action={$opt_action}&topic={$entity->guid}"),
+			'section' => 'actions',
+			'action' => true
+		);
+
+		$return[] = ElggMenuItem::factory($options);
+
 		if ($entity->canEdit()) {
 
 			if ($entity->topic_status == 'closed') {
 				$options = array(
 					'name' => 'open_topic',
-					'text' => elgg_echo('forums:label:openthread', array($count)),
+					'text' => elgg_echo('forums:label:openthread'),
 					'priority' => 1,
 					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=open",
 					'confirm' => elgg_echo('forums:label:openconfirm'),
@@ -454,7 +477,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			} else {
 				$options = array(
 					'name' => 'close_topic',
-					'text' => elgg_echo('forums:label:closethread', array($count)),
+					'text' => elgg_echo('forums:label:closethread'),
 					'priority' => 1,
 					'href' => "action/forums/forum_topic/status?guid={$entity->getGUID()}&status=closed",
 					'confirm' => elgg_echo('forums:label:closeconfirm'),

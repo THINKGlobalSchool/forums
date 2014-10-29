@@ -65,6 +65,8 @@ $english = array(
 	'forums:label:redirectforums' => 'Discussions have been moved to %s',
 	'forums:label:closethread' => 'Close Topic',
 	'forums:label:openthread' => 'Open Topic',
+	'forums:label:optout' => 'Stop topic notifications',
+	'forums:label:optin' => 'Get topic notifications',
 	'forums:label:closeconfirm' => 'Are you sure you want to close this topic?',
 	'forums:label:openconfirm' => 'Are you sure you want to open this topic?',
 	'forums:label:closed' => 'Topic closed',
@@ -100,6 +102,7 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 	'forums:success:forum_topic:open' => 'Topic opened',
 	'forums:success:forum_topic:closed' => 'Topic closed',
+	'forums:success:forum_topic:notifications' => 'Successfuly set topic notifications settings',
 
 	// New forum notification (for groups or subscribed)
 	'forums:new_forum:subject' => 'New Forum',

@@ -75,6 +75,9 @@ if (!$guid) {
 	// This states that: 'reply' is a forum_reply_to 'reply/topic' 
 	add_entity_relationship($reply->guid, FORUM_REPLY_RELATIONSHIP, $reply_to->guid);
 
+	// Add a relationship for the user to signify that they are now participating in the topic
+	add_entity_relationship(elgg_get_logged_in_user_guid(), FORUM_TOPIC_PARTICIPANT_RELATIONSHIP, $topic->guid);
+
 	// Notify users of new reply
 	forums_notify_new_reply($reply);
 

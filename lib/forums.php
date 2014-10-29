@@ -460,6 +460,7 @@ function forums_notify_new_topic($topic) {
  * - Forum moderators (designated by group, or moderator role)
  * - Forum owner
  * - Group owner
+ * - Users who are participating in the topic
  * 
  * @param ElggEntity $reply The forum reply
  * @return bool
@@ -475,7 +476,7 @@ function forums_notify_new_reply($reply) {
 	
 	// Get topic this was posted in
 	$topic = get_entity($reply->topic_guid);
-	
+
 	// Grab the forum
 	$forum = $reply->getContainerEntity();
 	
@@ -493,11 +494,28 @@ function forums_notify_new_reply($reply) {
 		$notify_users[] = $parent->owner_guid;
 	}
 
+	// Get participating users
+	$participating_users = elgg_get_entities_from_relationship(array(
+		'type' => 'user',
+		'relationship' => FORUM_TOPIC_PARTICIPANT_RELATIONSHIP, 
+		'relationship_guid' => $topic->guid, 
+		'inverse_relationship' => TRUE,
+	));
+
+	foreach ($participating_users as $user) {
+		$notify_users[] = $user->guid;
+	}
+
 	// Flush out dupes
 	$notify_users = array_unique($notify_users);
 
 	// Notify Users
 	foreach ($notify_users as $n) {
+		// Check if user has opted out of notifications for this topic
+		if (check_entity_relationship($n, FORUM_TOPIC_NO_NOTIFY_RELATIONSHIP, $topic->guid)) {
+			continue;
+		}
+
 		// Don't send a notification to the poster
 		if ($n != $poster->guid) {
 			// Determine sender from info
