@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -69,36 +69,50 @@ function forums_get_page_content_view($guid) {
 function forums_get_page_content_list($container_guid = NULL) {
 	$params = array(
 		'filter' => '',
-		//'header' => '',
 	);
 
-	$options = array(
-		'type' => 'object',
-		'subtype' => 'forum',
-		'full_view' => FALSE,
-		'container_guid' => $container_guid,
-	);
-
-	// We have a container_guid check for group
+	// If we have a container_guid check for group
 	if (elgg_instanceof($group = get_entity($container_guid), 'group')) {
 		elgg_push_breadcrumb($group->name);
+
+		$options = array(
+			'type' => 'object',
+			'subtype' => 'forum',
+			'full_view' => FALSE,
+			'container_guid' => $container_guid,
+			'list_class' => 'forum-list'
+		);
 
 		// Only show add forum button for the group owner or admins
 		if (elgg_is_admin_logged_in() || $group->canWriteToContainer()) {
 			elgg_register_title_button();
 		}
 		$params['title'] = elgg_echo('forums:title:ownerforums', array($group->name));
+
+		$list = elgg_list_entities_from_metadata($options);
+		if (!$list) {
+			$params['content'] = elgg_echo('forums:label:none');
+		} else {
+			$params['content'] = $list;
+		}
+
 	} else {
 		$params['title'] = elgg_echo('forums:title:allforums');
-		$options['metadata_name'] = 'site_forum';
-		$options['metadata_value'] = TRUE;
-	}
 
-	$list = elgg_list_entities_from_metadata($options);
-	if (!$list) {
-		$params['content'] = elgg_echo('forums:label:none');
-	} else {
-		$params['content'] = $list;
+		// Create a module for global forums
+		$global_module = elgg_view('modules/genericmodule', array(
+			'view' => 'forums/modules/global_forums',
+			'module_id' => 'forums-global-module'
+		));
+
+		$params['content'] .= elgg_view_module('featured', elgg_echo('forums:title:globalforums'), $global_module);
+
+		$group_module = elgg_view('modules/genericmodule', array(
+			'view' => 'forums/modules/group_forums',
+			'module_id' => 'forums-global-module'
+		));
+
+		$params['content'] .= elgg_view_module('featured', elgg_echo('forums:title:groupforums'), $group_module);
 	}
 
 	return $params;

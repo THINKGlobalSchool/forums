@@ -72,13 +72,46 @@ ___HTML;
 	// Display moderator role if in admin context
 	if (elgg_get_context() == 'admin') {
 		$role = get_entity($forum->moderator_role);
-		$subtitle = elgg_echo('forums:label:moderatedby', array($role->title));
+		$subtitle = elgg_echo('forums:label:moderatedby', array($role->title)) . "&nbsp;";
 	}
+
+	// Get last post for this forum
+	$last_post = elgg_get_entities(array(
+		'type' => 'object',
+		'subtypes' => array('forum_topic', 'forum_reply'),
+		'container_guid' => $forum->guid,
+		'limit' => 1
+	));
+
+	if (count($last_post)) {
+		$last_post = $last_post[0];
+		$owner = $last_post->getOwnerEntity();
+		// If anonymous, display as such
+		if ($forum->anonymous) {
+			// If the owner is an admin or a member of the moderator role, display mask
+			if (forums_is_moderator($owner, $forum)) {
+				$owner_link = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+			} else {
+				$owner_link = elgg_echo('forums:label:anonymous');
+			}
+		} else {
+			$owner_link = elgg_view('output/url', array(
+				'href' => "profile/$owner->username",
+				'text' => $owner->name,
+			));
+		}
+
+
+		$last_post_text = elgg_view_friendly_time($last_post->time_created) . "&nbsp;" . lcfirst(elgg_echo('forums:label:byline', array($owner_link)));
+	} else {
+		$last_post_text = elgg_echo('forums:label:never');
+	}
+
+	$subtitle .= elgg_echo('forums:label:lastpost', array($last_post_text));
 
 	$params = array(
 		'entity' => $forum,
 		'metadata' => $metadata,
-		'content' => elgg_get_excerpt($forum->description),
 		'subtitle' => $subtitle,
 	);
 	

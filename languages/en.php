@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -25,6 +25,8 @@ $english = array(
 
 	// Page titles 
 	'forums:title:allforums' => 'All Site Forums',
+	'forums:title:globalforums' => 'Global Forums',
+	'forums:title:groupforums' => 'Group Forums',
 	'forums:title:topics' => 'Discussion Topics',
 	'forums:title:topicedit' => 'Edit Topic',
 	'forums:title:replyedit' => 'Edit reply',
@@ -71,6 +73,8 @@ $english = array(
 	'forums:label:openconfirm' => 'Are you sure you want to open this topic?',
 	'forums:label:closed' => 'Topic closed',
 	'forums:label:closeddesc' => 'This topic has been closed by a moderator',
+	'forums:label:lastpost' => 'Last post: %s',
+	'forums:label:never' => 'Never',
 
 	// River
 	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',

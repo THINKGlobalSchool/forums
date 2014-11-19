@@ -17,6 +17,7 @@ $options = array(
 	'offset' => get_input('offset', 0),
 	'full_view' => FALSE,
 	'container_guid' => $vars['entity']->guid,
+	'list_class' => 'forum-list'
 );
 
 $list = elgg_list_entities($options);

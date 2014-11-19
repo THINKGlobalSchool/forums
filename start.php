@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  * THIS PLUGIN NEEDS TO BE FIRST IN THE LIST
@@ -124,6 +124,10 @@ function forums_init() {
 	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
 	elgg_register_action('forums/forum_topic/status', "$action_base/forum_topic/status.php");
 	elgg_register_action('forums/forum_topic/setnotifications', "$action_base/forum_topic/setnotifications.php");
+
+	// Register ajax views
+	elgg_register_ajax_view('forums/modules/global_forums');
+	elgg_register_ajax_view('forums/modules/group_forums');
 
 	return TRUE;
 }
@@ -363,7 +367,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 	// Add anonymous label
 	if ($subtype == 'forum' && $entity->anonymous) {
 		$options = array(
-			'name' => "anonymous_forum",
+			'name' => "access",
 			'text' =>  elgg_echo('forums:label:anonymous'),
 			'href' => FALSE,
 			'priority' => 100,
@@ -404,7 +408,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$options = array(
 			'name' => 'topic_count',
 			'text' => elgg_echo('forums:label:topiccount', array($topic_count)),
-			'priority' => 2,
+			'priority' => 1100,
+			'item_class' => 'forum-entity-menu-item',
 			'href' => FALSE,
 			'section' => 'info',
 		);
@@ -413,7 +418,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$options = array(
 			'name' => 'reply_count',
 			'text' => elgg_echo('forums:label:replycount', array($reply_count)),
-			'priority' => 3,
+			'priority' => 1000,
+			'item_class' => 'forum-entity-menu-item',
 			'href' => FALSE,
 			'section' => 'info',
 		);
@@ -437,7 +443,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$options = array(
 			'name' => 'reply_count',
 			'text' => elgg_echo('forums:label:replycount', array($count)),
-			'priority' => 3,
+			'priority' => 1000,
+			'item_class' => 'forum-entity-menu-item',
 			'href' => FALSE,
 			'section' => 'info',
 		);

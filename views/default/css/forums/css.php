@@ -108,6 +108,40 @@
 	color: #333;
 }
 
+.forum-entity-menu-item  {
+	width:75px;	
+	font-weight: bolder;
+	color: #666;
+}
+
+.forum-list {
+	border-top: 1px solid #ccc;
+}
+
+.forum-list > li {
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+
+.forum-list > li:nth-child(odd) {
+	background-color: #fff;
+}
+
+.forum-list > li:nth-child(even) {
+	background-color: #f0f0f0;
+}
+
+.forum-list > li .elgg-image-block {
+	padding: 4px 0 6px;
+	margin: 0;
+	margin-right: 10px;
+}
+
+.forum-list > li .elgg-image-block .elgg-body:first-child {
+	margin-left: 6px;
+}
+
 /** Elgg overrides **/
 
 .forum-topic .elgg-list, .forum-topic .elgg-list > li {

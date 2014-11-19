@@ -115,28 +115,60 @@ HTML;
 
 } else { // brief view
 
+	// Get last post
+	$last_post = elgg_get_entities_from_metadata(array(
+		'type' => 'object',
+		'subtype' => 'forum_reply',
+		'metadata_name' => 'topic_guid',
+		'metadata_value' => $topic->guid,
+		'limit' => 1
+	));
+
+	if (count($last_post)) {
+		$last_post = $last_post[0];
+		$last_post_owner = $last_post->getOwnerEntity();
+		// If anonymous, display as such
+		if ($forum->anonymous) {
+			// If the owner is an admin or a member of the moderator role, display mask
+			if (forums_is_moderator($last_post_owner, $forum)) {
+				$last_post_owner_link = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
+			} else {
+				$last_post_owner_link = elgg_echo('forums:label:anonymous');
+			}
+		} else {
+			$last_post_owner_link = elgg_view('output/url', array(
+				'href' => "profile/$last_post_owner->username",
+				'text' => $last_post_owner->name,
+			));
+		}
+		$last_post_text = elgg_view_friendly_time($last_post->time_created) . "&nbsp;" . lcfirst(elgg_echo('forums:label:byline', array($last_post_owner_link)));
+	} else {
+		$last_post_text = elgg_echo('forums:label:never');
+	}
+
 	// If anonymous, display as such
 	if ($forum->anonymous) {
 		// If the owner is an admin or a member of the moderator role, display mask
 		if (forums_is_moderator($owner, $forum)) {
 			$bymask = "<span class='moderator_mask'>" . elgg_echo('forums:label:bymask', array($forum->moderator_mask)) . "</span>";
-			$owner_text = elgg_echo('forums:label:byline', array($bymask));
+			$owner_text = elgg_echo('forums:label:topicstartedby', array($bymask));
 		} else {
 			$owner_text = elgg_echo('forums:label:byanonymous');
 		}
 
-		$subtitle = "<p>$owner_text $date</p>";
+		$subtitle = "$owner_text $date";
 	} else {
 		$owner_link = elgg_view('output/url', array(
 			'href' => "profile/$owner->username",
 			'text' => $owner->name,
 		));
 
-		$author_text = elgg_echo('byline', array($owner_link));
-		$subtitle = "<p>$author_text $date</p>";
+		$author_text = elgg_echo('forums:label:topicstartedby', array($owner_link));
+		$subtitle = "$author_text $date";
 
 		$owner_icon = elgg_view_entity_icon($owner, 'tiny');
 	}
+	$subtitle .= "<br />" . elgg_echo('forums:label:lastpost', array($last_post_text));
 
 	$params = array(
 		'entity' => $topic,
