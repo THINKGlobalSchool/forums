@@ -1,11 +1,11 @@
 <?php
 /**
- * Forums Forum Object view
+ * Forums 'Forum' Object view
  *
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -53,6 +53,7 @@ if ($full_view) {
 	echo <<<___HTML
 		<div class="forum">
 			$summary
+			<div class='forum-stats-container-$forum->guid'></div>
 			<div class='forum-topics'>
 				<div class='forum-topics-header'>
 					<h3>$topics_title</h3>
@@ -69,10 +70,23 @@ if ($full_view) {
 ___HTML;
 
 } else {
+	// Grab container
+	$container = $forum->getContainerEntity();
+
+	// Check if we're viewing this forum outside of it's group container context
+	if (elgg_instanceof($container, 'group') && elgg_get_page_owner_guid() != $container->guid) {
+		// Add group info to listing
+		$group_link = elgg_view('output/url', array(
+			'value' => elgg_normalize_url("forums/group/{$container->guid}"),
+			'text' => $container->name
+		));
+		$subtitle = "<div class='mbs mts'>" . elgg_echo('forums:label:inmask', array($group_link)) . "</div>";
+	}
+
 	// Display moderator role if in admin context
 	if (elgg_get_context() == 'admin') {
 		$role = get_entity($forum->moderator_role);
-		$subtitle = elgg_echo('forums:label:moderatedby', array($role->title)) . "&nbsp;";
+		$subtitle .= elgg_echo('forums:label:moderatedby', array($role->title)) . "&nbsp;";
 	}
 
 	// Get last post for this forum
@@ -117,4 +131,5 @@ ___HTML;
 	
 	$body = elgg_view('object/elements/summary', $params);
 	echo "<div class='forum'>" . elgg_view_image_block('', $body) . "</div>";
+	echo "<div class='forum-stats-container-{$forum->guid}'></div>";
 }

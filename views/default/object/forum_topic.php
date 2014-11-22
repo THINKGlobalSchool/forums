@@ -78,6 +78,7 @@ if ($full) {
 	$body = elgg_view('object/elements/summary', $params);
 
 	$content = elgg_view_image_block($owner_icon, $body);
+	$content .= "<div class='forum-stats-container-$topic->guid'></div>";
 
 	$content .= elgg_view('forums/replies', $vars);
 
@@ -181,4 +182,5 @@ HTML;
 	$body = elgg_view('object/elements/summary', $params);
 
 	echo elgg_view_image_block($owner_icon, $body);
+	echo "<div class='forum-stats-container-{$topic->guid}'></div>";
 }

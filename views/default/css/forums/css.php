@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -28,7 +28,8 @@
 }
 
 .forum .forum-topics {
-	
+	border-top: 1px dotted #CCC;
+	padding-top: 10px;
 }
 
 .forum .forum-topics-header {
@@ -140,6 +141,16 @@
 
 .forum-list > li .elgg-image-block .elgg-body:first-child {
 	margin-left: 6px;
+}
+
+/** Forum stats **/
+.forum-participation-count {
+	color: #444;
+}
+
+.forum-stats-module {
+	margin: 15px;
+	box-shadow: 2px 2px 3px #666;
 }
 
 /** Elgg overrides **/

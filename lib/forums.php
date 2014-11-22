@@ -754,3 +754,133 @@ function merge_forum_and_topic_tags($forum, $topic) {
 
 	return FALSE;
 }
+
+/**
+ * Get forum members status
+ * 
+ * @param  ElggObject $forum_entity Forum/Topic entity
+ * @param  ElggGroup  $group        Group to glean this information from         
+ * 
+ * @return array() member stats info, as below:
+ *
+ * array(
+ *     'total_group_members'         => (int) Total Group Members
+ *     'total_participating_members' => (int) Total Members participating in this forum/topic
+ *     'participating_members_stats' => array(
+ *         'member_guid' => array(
+ *             'reply_count' => (int) # of replies in this forum/topic
+ *             'word_count'  => (int) Word count of combined replies in forum/topic
+ *         )
+ *     )
+ *     'not_participating_members'    => array(member_guid, ...) Members not participating
+ * )
+ */
+function forums_get_group_members_stats($forum_entity, $group) {
+	$dbprefix = elgg_get_config('dbprefix');
+
+	// Get group members info
+	$group_members = $group->getMembers(0);
+	$group_member_guids = array();
+
+	foreach ($group_members as $member) {
+		$group_member_guids[] = $member->guid;
+	}
+
+	// Common participation options
+	$pm_options = array(
+		'type' => 'object',
+		'subtype' => 'forum_reply',
+		'owner_guids' => $group_member_guids, // Limit to group member guids
+		'limit' => 0,
+		'joins' => "JOIN {$dbprefix}users_entity ue on ue.guid = e.owner_guid",
+		'group_by' => 'ue.guid'
+	);
+
+	// Handle different subtypes
+	if (elgg_instanceof($forum_entity, 'object', 'forum')) {
+		// Forum entity options
+		$pm_options['container_guid'] = $forum_entity->guid;
+	} else if (elgg_instanceof($forum_entity, 'object', 'forum_topic')) {
+		// Forum topic entity options
+		$pm_options['container_guid'] = $forum_entity->container_guid;
+		$pm_options['metadata_name'] = 'topic_guid';
+		$pm_options['metadata_value'] = $forum_entity->guid;
+	} else {
+		// Not a forum/topic.. bounce
+		return FALSE;
+	}
+	// Going to ignore access here to save on expensive queries
+	$ia = elgg_get_ignore_access();
+	elgg_set_ignore_access(TRUE);
+
+	// Get replies for this entity, grouped by user to sort out participation
+	$pm = elgg_get_entities_from_metadata($pm_options);
+
+	// Build an array of participating members
+	$p_member_guids = array();
+
+	// Copy group members to non-participating array, we'll remove below
+	$np_member_guids = $group_member_guids;
+
+	// Add participating members and remove from non-participating
+	foreach ($pm as $e) {
+		// Add to participating member guids
+		$p_member_guids[] = $e->owner_guid;
+
+		// Remove user from non-participating array
+		if(($k = array_search($e->owner_guid, $np_member_guids)) !== FALSE) {
+			unset($np_member_guids[$k]);
+		}
+	}
+
+	// Start building participating member stats
+	$pm_stats = array();
+
+	// Fix pm options and re-use conditional subtype options
+	unset($pm_options['joins']);
+	unset($pm_options['owner_guids']);
+	unset($pm_options['group_by']);
+
+	// Loop over participating members to build individual stats
+	foreach ($p_member_guids as $m) {
+		$pm_options['owner_guid'] = $m;
+
+		// Get members's replies
+		$mr = elgg_get_entities_from_metadata($pm_options);
+
+		// Count 'em
+		$reply_count = count($mr);
+
+		// Build word count
+		$words = '';
+		foreach ($mr as $r) {
+			// Use the longtext view to grab description content, then strip tags
+			$words .= ' ' . strip_tags(elgg_view('output/longtext', array('value' => $r->description)));
+		}
+
+		// Count words
+		$word_count = str_word_count($words);
+
+		$pm_stats[$m] = array(
+			'reply_count' => $reply_count,
+			'word_count' => $word_count
+		);
+	}
+
+	// Count participating members
+	$tpm = count($pm);
+
+	// Count group members
+	$tm = count($group_members);
+
+	// Reset access
+	elgg_set_ignore_access($ia);
+
+	// Return
+	return array(
+		'total_group_members' => $tm,
+		'total_participating_members' => $tpm,
+		'participating_members_stats' => $pm_stats,
+		'not_participating_members' => $np_member_guids
+	);
+}

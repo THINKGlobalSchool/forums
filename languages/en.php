@@ -13,6 +13,7 @@
 $english = array(
 	// Generic
 	'forum' => 'Forum',
+	'forum_topic' => 'Topic',
 	'forums' => 'Forums',
 	'item:object:forum' => 'Forums',
 	'item:object:forum_topic' => 'Forum Topics',
@@ -75,6 +76,18 @@ $english = array(
 	'forums:label:closeddesc' => 'This topic has been closed by a moderator',
 	'forums:label:lastpost' => 'Last post: %s',
 	'forums:label:never' => 'Never',
+	'forums:label:inmask' => 'In %s',
+	'forums:label:viewstats' => 'View Stats',
+	'foruma:label:statsmask' => '%s Stats',
+	'forums:label:close' => 'Close',
+
+	// Forum stats
+	'forums:stats:totals' => '<strong>%s</strong> out of <strong>%s</strong> group members are participating in this %s.',
+	'forums:stats:member' => 'Member',
+	'forums:stats:numreplies' => '# of replies',
+	'forums:stats:totalwordcount' => 'Total reply word count',
+	'forums:stats:participatingmembers' => 'Participating Members',
+	'forums:stats:notparticipatingmembers' => 'Not Participating Members',
 
 	// River
 	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',

@@ -128,6 +128,7 @@ function forums_init() {
 	// Register ajax views
 	elgg_register_ajax_view('forums/modules/global_forums');
 	elgg_register_ajax_view('forums/modules/group_forums');
+	elgg_register_ajax_view('forums/stats');
 
 	return TRUE;
 }
@@ -424,6 +425,24 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'section' => 'info',
 		);
 		$return[] = ElggMenuItem::factory($options);
+
+		// Add status for non-anonymous forums
+		$container = $entity->getContainerEntity();
+		if (!$entity->anonymous && elgg_instanceof($container, 'group') && $container->canEdit()) {
+			$view_stats = elgg_view('output/url', array(
+				'value' => '#',
+				'text' => elgg_echo('forums:label:viewstats'),
+				'data-guid' => $entity->guid
+			));
+			$options = array(
+				'name' => 'view_stats',
+				'text' => $view_stats,
+				'priority' => 150,
+				'href' => FALSE,
+				'section' => 'info',
+			);
+			$return[] = ElggMenuItem::factory($options);
+		}
 	}
 
 	// Count replies, close/open thread command
@@ -471,7 +490,6 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 		$return[] = ElggMenuItem::factory($options);
 
 		if ($entity->canEdit()) {
-
 			if ($entity->topic_status == 'closed') {
 				$options = array(
 					'name' => 'open_topic',
@@ -504,6 +522,24 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'section' => 'info',
 			);
 
+			$return[] = ElggMenuItem::factory($options);
+		}
+
+		// Add status for non-anoymous forums
+		$container = $entity->getContainerEntity()->getContainerEntity();
+		if (!$entity->getContainerEntity()->anonymous && elgg_instanceof($container, 'group') && $container->canEdit()) {
+			$view_stats = elgg_view('output/url', array(
+				'value' => '#',
+				'text' => elgg_echo('forums:label:viewstats'),
+				'data-guid' => $entity->guid
+			));
+			$options = array(
+				'name' => 'view_stats',
+				'text' => $view_stats,
+				'priority' => 150,
+				'href' => FALSE,
+				'section' => 'info',
+			);
 			$return[] = ElggMenuItem::factory($options);
 		}
 	}
