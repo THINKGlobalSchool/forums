@@ -398,7 +398,7 @@ function forums_get_reply_parent($reply) {;
 		'type' => 'object',
 		'subtypes' => ELGG_ENTITIES_ANY_VALUE,
 		'limit' => 1,
-		'relationship' => 'forum_reply_to', 
+		'relationship' => FORUM_REPLY_RELATIONSHIP, 
 		'relationship_guid' => $reply->guid, 
 		'inverse_relationship' => FALSE,
 	);

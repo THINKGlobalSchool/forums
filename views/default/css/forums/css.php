@@ -57,13 +57,14 @@
 
 .forum-reply {
 	box-shadow: -1px 1px 4px #bbb;
-	-webkit-border-radius: 10px 3px 3px 3px;
-	-moz-border-radius: 10px 3px 3px 3px;
-	border-radius: 10px 3px 3px 3px;
 }
 
-.forum-reply.forum-reply-active {
-	box-shadow: -1px 3px 25px #41a317;
+.forum-reply-module.forum-reply-active {
+	border: 1px solid #333 !important;
+}
+
+.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-head {
+	background: #333;
 }
 
 .forum-topic .forum-reply-icon {

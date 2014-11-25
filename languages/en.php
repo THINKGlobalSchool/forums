@@ -67,11 +67,13 @@ $english = array(
 	'forums:label:discussiondisabled' => 'Discussions Moved',
 	'forums:label:redirectforums' => 'Discussions have been moved to %s',
 	'forums:label:closethread' => 'Close Topic',
+	'forums:label:closereplythread' => 'Close Thread',
 	'forums:label:openthread' => 'Open Topic',
+	'forums:label:openreplythread' => 'Open Thread',
 	'forums:label:optout' => 'Stop topic notifications',
 	'forums:label:optin' => 'Get topic notifications',
-	'forums:label:closeconfirm' => 'Are you sure you want to close this topic?',
-	'forums:label:openconfirm' => 'Are you sure you want to open this topic?',
+	'forums:label:closeconfirm' => 'Are you sure you want to close this topic/thread?',
+	'forums:label:openconfirm' => 'Are you sure you want to open this topic/thread?',
 	'forums:label:closed' => 'Topic closed',
 	'forums:label:closeddesc' => 'This topic has been closed by a moderator',
 	'forums:label:lastpost' => 'Last post: %s',
@@ -80,6 +82,7 @@ $english = array(
 	'forums:label:viewstats' => 'View Stats',
 	'foruma:label:statsmask' => '%s Stats',
 	'forums:label:close' => 'Close',
+	'forums:label:closed' => '[CLOSED]',
 
 	// Forum stats
 	'forums:stats:totals' => '<strong>%s</strong> out of <strong>%s</strong> group members are participating in this %s.',
@@ -110,7 +113,7 @@ $english = array(
 	'forums:error:forum_reply:save' => 'There was an error saving the reply',
 	'forums:error:forum_reply:edit' => 'There was an error editing the reply', 
 	'forums:error:invalidstatus' => 'Invalid status',
-	'forums:error:setstatus' => 'There was an error setting the topic status',
+	'forums:error:setstatus' => 'There was an error setting the topic/thread status',
 
 	'forums:success:forum:save' => 'Successfully saved forum',
 	'forums:success:forum:delete' => 'Successfully deleted the forum',
@@ -120,6 +123,8 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 	'forums:success:forum_topic:open' => 'Topic opened',
 	'forums:success:forum_topic:closed' => 'Topic closed',
+	'forums:success:forum_reply:open' => 'Thread opened',
+	'forums:success:forum_reply:closed' => 'Thread closed',
 	'forums:success:forum_topic:notifications' => 'Successfuly set topic notifications settings',
 
 	// New forum notification (for groups or subscribed)

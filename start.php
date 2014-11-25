@@ -123,6 +123,7 @@ function forums_init() {
 	elgg_register_action('forums/forum_topic/delete', "$action_base/forum_topic/delete.php");
 	elgg_register_action('forums/forum_reply/delete', "$action_base/forum_reply/delete.php");
 	elgg_register_action('forums/forum_topic/status', "$action_base/forum_topic/status.php");
+	elgg_register_action('forums/forum_reply/status', "$action_base/forum_reply/status.php");
 	elgg_register_action('forums/forum_topic/setnotifications', "$action_base/forum_topic/setnotifications.php");
 
 	// Register ajax views
@@ -540,6 +541,35 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'href' => FALSE,
 				'section' => 'info',
 			);
+			$return[] = ElggMenuItem::factory($options);
+		}
+	}
+
+	// Set up entity reply
+	if ($subtype == 'forum_reply' && $entity->getContainerEntity()->canEdit()) {
+		// Get the reply-to guid (topic or reply)
+		$parent = forums_get_reply_parent($entity);
+		// Can't close a parent reply (that's what closing the topic is for)
+		if ($parent->getSubtype() != 'forum_topic') {
+			if ($entity->reply_status == 'closed') {
+				$options = array(
+					'name' => 'open_thread',
+					'text' => elgg_echo('forums:label:openreplythread'),
+					'priority' => 1,
+					'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=open",
+					'confirm' => elgg_echo('forums:label:openconfirm'),
+					'section' => 'actions',
+				);
+			} else {
+				$options = array(
+					'name' => 'close_thread',
+					'text' => elgg_echo('forums:label:closereplythread'),
+					'priority' => 1,
+					'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=closed",
+					'confirm' => elgg_echo('forums:label:closeconfirm'),
+					'section' => 'actions',
+				);
+			}
 			$return[] = ElggMenuItem::factory($options);
 		}
 	}

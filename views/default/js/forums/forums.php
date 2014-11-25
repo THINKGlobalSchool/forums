@@ -69,7 +69,7 @@ elgg.forums.statsCloseClick = function(event) {
 
 // Forum reply hover
 elgg.forums.replyHover = function(event) {
-	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid')).parent();
+	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid'));
 	if (!$(this).hasClass('elgg-state-active')) {
 		if (event.type == 'mouseover') {
 			$reply_container.addClass('forum-reply-active');
@@ -81,7 +81,7 @@ elgg.forums.replyHover = function(event) {
 
 // Reply click handler
 elgg.forums.replyClick = function(event) {
-	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid')).parent();
+	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid'));
 	if ($(this).hasClass('elgg-state-active')) {
 		$reply_container.addClass('forum-reply-active');
 	} else {
