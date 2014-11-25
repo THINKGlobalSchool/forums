@@ -768,8 +768,9 @@ function merge_forum_and_topic_tags($forum, $topic) {
  *     'total_participating_members' => (int) Total Members participating in this forum/topic
  *     'participating_members_stats' => array(
  *         'member_guid' => array(
- *             'reply_count' => (int) # of replies in this forum/topic
- *             'word_count'  => (int) Word count of combined replies in forum/topic
+ *             'reply_count'          => (int) # of replies in this forum/topic
+ *             'reply_to_reply_count' => (int) # of replies to other user's posts
+ *             'word_count'           => (int) Word count of combined replies in forum/topic
  *         )
  *     )
  *     'not_participating_members'    => array(member_guid, ...) Members not participating
@@ -851,6 +852,30 @@ function forums_get_group_members_stats($forum_entity, $group) {
 		// Count 'em
 		$reply_count = count($mr);
 
+		// Grab reply guids to start building 'reply to reply' count
+		$reply_guids = array();
+		foreach ($mr as $r) {
+			$reply_guids[] = $r->guid;
+		}
+
+		// Reply to reply options
+		$dbprefix = elgg_get_config('dbprefix');
+		$rtr_options = array(
+			'guids' => $reply_guids,
+			'limit' => 0,
+			'joins' => array(
+				"JOIN {$dbprefix}entity_relationships r on r.guid_one = e.guid",
+				"JOIN {$dbprefix}entities er on er.guid = r.guid_two"
+			),
+			'wheres' => array(
+				"e.owner_guid != er.owner_guid"
+			)
+		);
+
+		$rtr = elgg_get_entities($rtr_options);
+
+		$reply_to_reply_count = count($rtr);
+
 		// Build word count
 		$words = '';
 		foreach ($mr as $r) {
@@ -863,6 +888,7 @@ function forums_get_group_members_stats($forum_entity, $group) {
 
 		$pm_stats[$m] = array(
 			'reply_count' => $reply_count,
+			'replies_to_replies' => $reply_to_reply_count,
 			'word_count' => $word_count
 		);
 	}

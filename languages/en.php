@@ -88,6 +88,7 @@ $english = array(
 	'forums:stats:totalwordcount' => 'Total reply word count',
 	'forums:stats:participatingmembers' => 'Participating Members',
 	'forums:stats:notparticipatingmembers' => 'Not Participating Members',
+	'forums:stats:repliestoreplies' => 'Replies to replies',
 
 	// River
 	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',

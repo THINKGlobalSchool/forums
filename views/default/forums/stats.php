@@ -60,6 +60,7 @@ $stat_string = elgg_echo('forums:stats:totals', array(
 
 $member_header = elgg_echo('forums:stats:member');
 $replies_header = elgg_echo('forums:stats:numreplies');
+$replies_replies_header = elgg_echo('forums:stats:repliestoreplies');
 $words_header = elgg_echo('forums:stats:totalwordcount');
 
 $p_members_title = elgg_echo('forums:stats:participatingmembers');
@@ -74,12 +75,14 @@ if (count($member_stat_info['participating_members_stats'])) {
 		));
 
 		$reply_count = $stats['reply_count'];
+		$replies_to_replies = $stats['replies_to_replies'];
 		$word_count = $stats['word_count'];
 
 		$p_content .= <<<HTML
 			<tr>
 				<td>$member_link</td>
 				<td><label>$reply_count</label></td>
+				<td><label>$replies_to_replies</label></td>
 				<td><label>$word_count</label></td>
 			</tr>
 HTML;
@@ -92,6 +95,7 @@ HTML;
 				<tr>
 					<th><label>$member_header</label></th>
 					<th><label>$replies_header</label></th>
+					<th><label>$replies_replies_header</label></td>
 					<th><label>$words_header</label></th>
 				</tr>
 			</thead>
