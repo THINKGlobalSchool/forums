@@ -88,7 +88,7 @@ if ($full) {
 			$content .= elgg_view('output/url', array(
 				'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytotopic"),
 				'href' => '#forum-reply-edit-form-' . $topic->guid,
-				'class' => 'forum-reply-button',
+				'class' => 'forum-reply-button elgg-button elgg-button-submit',
 				'rel' => 'toggle',
 			));
 	
