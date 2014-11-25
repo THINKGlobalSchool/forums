@@ -77,6 +77,7 @@ if ($full) {
 			'href' => '#forum-reply-edit-form-' . $reply->guid,
 			'class' => 'forum-reply-button reply-to-reply',
 			'rel' => 'toggle',
+			'data-reply_guid' => $reply->guid,
 		)) . "<div style='clear: both;'></div>";
 
 		// Reply form vars

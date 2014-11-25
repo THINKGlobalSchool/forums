@@ -21,6 +21,12 @@ elgg.forums.init = function() {
 	// Delegate stats close link
 	$(document).delegate('.forum-stats-close', 'click', elgg.forums.statsCloseClick);
 
+	// Delegate reply mouseover/mouseout
+	$(document).delegate('.reply-to-reply', 'mouseover mouseout', elgg.forums.replyHover);
+
+	// Delegate reply click
+	$(document).delegate('.reply-to-reply', 'click', elgg.forums.replyClick);
+
 	// Show the moderator mask input
 	$('select#anonymous').change(function() {
 		if($(this).val() == '1') {
@@ -59,6 +65,28 @@ elgg.forums.viewStatsClick = function(event) {
 elgg.forums.statsCloseClick = function(event) {
 	event.preventDefault();
 	$(this).closest('.forum-stats-module').fadeOut('fast');
+}
+
+// Forum reply hover
+elgg.forums.replyHover = function(event) {
+	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid')).parent();
+	if (!$(this).hasClass('elgg-state-active')) {
+		if (event.type == 'mouseover') {
+			$reply_container.addClass('forum-reply-active');
+		} else if (event.type == 'mouseout') {
+			$reply_container.removeClass('forum-reply-active');
+		}
+	}
+}
+
+// Reply click handler
+elgg.forums.replyClick = function(event) {
+	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid')).parent();
+	if ($(this).hasClass('elgg-state-active')) {
+		$reply_container.addClass('forum-reply-active');
+	} else {
+		$reply_container.removeClass('forum-reply-active');
+	}
 }
 
 elgg.register_hook_handler('init', 'system', elgg.forums.init);

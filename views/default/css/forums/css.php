@@ -62,6 +62,10 @@
 	border-radius: 10px 3px 3px 3px;
 }
 
+.forum-reply.forum-reply-active {
+	box-shadow: -1px 3px 25px #41a317;
+}
+
 .forum-topic .forum-reply-icon {
 	margin-right: 5px;
 	vertical-align: middle;
