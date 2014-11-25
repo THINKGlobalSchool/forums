@@ -547,31 +547,26 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 
 	// Set up entity reply
 	if ($subtype == 'forum_reply' && $entity->getContainerEntity()->canEdit()) {
-		// Get the reply-to guid (topic or reply)
-		$parent = forums_get_reply_parent($entity);
-		// Can't close a parent reply (that's what closing the topic is for)
-		if ($parent->getSubtype() != 'forum_topic') {
-			if ($entity->reply_status == 'closed') {
-				$options = array(
-					'name' => 'open_thread',
-					'text' => elgg_echo('forums:label:openreplythread'),
-					'priority' => 1,
-					'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=open",
-					'confirm' => elgg_echo('forums:label:openconfirm'),
-					'section' => 'actions',
-				);
-			} else {
-				$options = array(
-					'name' => 'close_thread',
-					'text' => elgg_echo('forums:label:closereplythread'),
-					'priority' => 1,
-					'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=closed",
-					'confirm' => elgg_echo('forums:label:closeconfirm'),
-					'section' => 'actions',
-				);
-			}
-			$return[] = ElggMenuItem::factory($options);
+		if ($entity->reply_status == 'closed') {
+			$options = array(
+				'name' => 'open_thread',
+				'text' => elgg_echo('forums:label:openreplythread'),
+				'priority' => 1,
+				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=open",
+				'confirm' => elgg_echo('forums:label:openconfirm'),
+				'section' => 'actions',
+			);
+		} else {
+			$options = array(
+				'name' => 'close_thread',
+				'text' => elgg_echo('forums:label:closereplythread'),
+				'priority' => 1,
+				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=closed",
+				'confirm' => elgg_echo('forums:label:closeconfirm'),
+				'section' => 'actions',
+			);
 		}
+		$return[] = ElggMenuItem::factory($options);
 	}
 	return $return;
 }
