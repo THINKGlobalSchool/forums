@@ -53,7 +53,7 @@ $english = array(
 	'forums:label:dateline' => 'posted %s', 
 	'forums:label:topicstartedby' => ' Started by %s',
 	'forums:label:replytothis' => 'Reply to this',
-	'forums:label:replytotopic' => 'Reply to topic',
+	'forums:label:replytotopic' => 'Post to topic',
 	'forums:label:totopic' => '&nbsp;to topic: %s',
 	'forums:label:moderatedby' => 'Moderated by: %s',
 	'forums:label:anonymous' => 'Anonymous',
@@ -87,11 +87,11 @@ $english = array(
 	// Forum stats
 	'forums:stats:totals' => '<strong>%s</strong> out of <strong>%s</strong> group members are participating in this %s.',
 	'forums:stats:member' => 'Member',
-	'forums:stats:numreplies' => '# of replies',
+	'forums:stats:numreplies' => '# of posts',
 	'forums:stats:totalwordcount' => 'Total reply word count',
 	'forums:stats:participatingmembers' => 'Participating Members',
 	'forums:stats:notparticipatingmembers' => 'Not Participating Members',
-	'forums:stats:repliestoreplies' => 'Replies to replies',
+	'forums:stats:repliestoreplies' => '# of replies',
 
 	// River
 	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',

@@ -57,14 +57,24 @@
 
 .forum-reply {
 	box-shadow: -1px 1px 4px #bbb;
+	margin-bottom: 4px;
 }
 
 .forum-reply-module.forum-reply-active {
-	border: 1px solid #333 !important;
+	border: 2px solid #333 !important;
+	box-shadow: 0px 0px 10px #85161d;
 }
 
 .forum-reply-module.forum-reply-active.forum-reply-module > .elgg-head {
-	background: #333;
+	background: linear-gradient(-180deg, rgb(171, 51, 45) 0%, rgb(127, 19, 25) 100%);
+	padding: 4px;
+}
+
+.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-body {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 9px;
+	padding-top: 11px;
 }
 
 .forum-topic .forum-reply-icon {
