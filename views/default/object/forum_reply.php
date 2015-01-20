@@ -104,6 +104,9 @@ if ($full) {
 		$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
 	}
 
+	$vars['reply_limit'] = 0;
+	$vars['offset_key'] = 'offset';
+
 	$content .= elgg_view('forums/replies', $vars);
 
 	$content = elgg_view_module('featured', $title, $content, array(

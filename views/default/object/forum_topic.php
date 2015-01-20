@@ -80,6 +80,9 @@ if ($full) {
 	$content = elgg_view_image_block($owner_icon, $body);
 	$content .= "<div class='forum-stats-container-$topic->guid'></div>";
 
+	$vars['reply_limit'] = 2;
+	$vars['offset_key'] = 'topic_offset';
+
 	$content .= elgg_view('forums/replies', $vars);
 
 	// Logged in and open topics only

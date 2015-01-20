@@ -9,13 +9,19 @@
  * @link http://www.thinkglobalschool.com/
  * 
  * @uses $vars['parent_open']
+ * @uses $vars['reply_limit']
+ * @uses $vars['offset_key']
  */
+
+$reply_limit = elgg_extract('reply_limit', $vars, 0);
+$offset_key = elgg_extract('offset_key', $vars, 'offset');
 
 $options = array(
 	'type' => 'object',
 	'subtype' => 'forum_reply',
-	'limit' => get_input('limit', 15),
-	'offset' => get_input('offset', 0),
+	'limit' => $reply_limit,
+	'offset' => get_input($offset_key, 0),
+	'offset_key' => $offset_key,
 	'full_view' => TRUE,
 	'container_guid' => $vars['entity']->container_guid,
 	'relationship' => FORUM_REPLY_RELATIONSHIP, 
