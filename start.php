@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2014
+ * @copyright THINK Global School 2010 - 2015
  * @link http://www.thinkglobalschool.com/
  * 
  * THIS PLUGIN NEEDS TO BE FIRST IN THE LIST
@@ -92,9 +92,9 @@ function forums_init() {
 	// Include forum topics when grabbing tagdashboard subtypes from metadata
 	elgg_register_plugin_hook_handler('tagdashboards:metadata:subtypes', 'container_check', 'forums_tagdashboard_metadata_subtype_handler');
 
-	// notifications
-	register_notification_object('object', 'forum', elgg_echo('forums:new_forum:subject'));
-	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'new_forum_notify_message');
+	// Notifications
+	elgg_register_notification_event('object', 'forum', array('create'));
+	elgg_register_plugin_hook_handler('prepare', 'notification:publish:object:forum', 'forum_prepare_notification');
 
 	// Unregister 'discussions'
 	unregister_entity_type('object', 'groupforumtopic');
@@ -107,10 +107,8 @@ function forums_init() {
 	// Unregister discussions
 	unregister_entity_type('object', 'groupforumtopic');
 
-	// Register URL handler
-	elgg_register_entity_url_handler('object', 'forum', 'forum_url');
-	elgg_register_entity_url_handler('object', 'forum_topic', 'forum_topic_url');
-	elgg_register_entity_url_handler('object', 'forum_reply', 'forum_reply_url');
+	// Register URL handler (handles all subtypes)
+	elgg_register_plugin_hook_handler('entity:url', 'object', 'forum_url_handler');
 
 	// Register actions
 	$action_base = elgg_get_plugins_path() . 'forums/actions/forums';
@@ -292,35 +290,34 @@ function discussion_redirect_page_handler($page) {
 	echo elgg_view_page($title, $body);
 }
 
-
 /**
- * Populates the ->getUrl() method for forum entities
+ * Returns the URL from forum entities
  *
- * @param ElggObject entity
- * @return string request url
+ * @param string $hook   'entity:url'
+ * @param string $type   'object'
+ * @param string $url    The current URL
+ * @param array  $params Hook parameters
+ * @return string
  */
-function forum_url($entity) {
-	return elgg_get_site_url() . 'forums/view/' . $entity->guid;
-}
+function forum_url_handler($hook, $type, $url, $params) {
+	$entity = $params['entity'];
 
-/**
- * Populates the ->getUrl() method for forum topic entities
- *
- * @param ElggObject entity
- * @return string request url
- */
-function forum_topic_url($entity) {
-	return elgg_get_site_url() . 'forums/forum_topic/view/' . $entity->guid;
-}
+	$forum_subtypes = array(
+		'forum',
+		'forum_topic',
+		'forum_reply'
+	);
 
-/**
- * Populates the ->getUrl() method for forum reply entities
- *
- * @param ElggObject entity
- * @return string request url
- */
-function forum_reply_url($entity) {
-	return elgg_get_site_url() . 'forums/forum_reply/view/' . $entity->guid;
+	// Check that the entity is a forum object
+	if (!in_array($entity->getSubtype(), $forum_subtypes)) {
+		return;
+	}
+
+	if ($entity->getSubtype() != 'forum') {
+		$subtype = $entity->getSubtype() . "/";
+	}
+
+	return "forums/{$subtype}view/{$entity->guid}";
 }
 
 /**
@@ -784,30 +781,35 @@ function forums_tagdashboard_metadata_subtype_handler($hook, $type, $value, $par
 	return $value;
 }
 
-
 /**
- * Set the notification message for forums
- * 
- * @param string $hook    Hook name
- * @param string $type    Hook type
- * @param string $message The current message body
- * @param array  $params  Parameters about the blog posted
- * @return string
+ * Prepare a notification message about a new forum
+ *
+ * @param string                          $hook         Hook name
+ * @param string                          $type         Hook type
+ * @param Elgg_Notifications_Notification $notification The notification to prepare
+ * @param array                           $params       Hook parameters
+ * @return Elgg_Notifications_Notification
  */
-function new_forum_notify_message($hook, $type, $message, $params) {
-	$entity = $params['entity'];
-	$to_entity = $params['to_entity'];
+function forum_prepare_notification($hook, $type, $notification, $params) {
+	$entity = $params['event']->getObject();
+	$owner = $params['event']->getActor();
+	$recipient = $params['recipient'];
+	$language = $params['language'];
 	$method = $params['method'];
-	if (elgg_instanceof($entity, 'object', 'forum')) {
-		$descr = $entity->description;
-		$title = $entity->title;
-		$owner = $entity->getOwnerEntity();
-		return elgg_echo('forums:new_forum:body', array(
+
+	// Title for the notification
+	$notification->subject = elgg_echo('forums:new_forum:subject');
+
+    // Message body for the notification
+	$notification->body =elgg_echo('forums:new_forum:body', array(
 			$owner->name,
-			$title,
-			$descr,
+			$entity->title,
+			$entity->description,
 			$entity->getURL()
-		));
-	}
-	return null;
+	), $language);
+
+    // The summary text is used e.g. by the site_notifications plugin
+    $notification->summary = elgg_echo('forums:new_forum:summary', array($entity->title), $language);
+
+    return $notification;
 }

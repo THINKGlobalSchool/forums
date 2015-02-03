@@ -3,14 +3,14 @@
 	<name>Forums</name>
 	<id>forums</id>
 	<author>Jeff Tilson</author>
-	<version>1.9</version>
+	<version>1.10</version>
 	<category>enhancement</category>
 	<category>content</category>
 	<category>tgs</category>
 	<blurb>Forums</blurb>
 	<description>Full Featured Forums</description>
 	<website>http://www.thinkglobalschool.org/</website>
-	<copyright>THINK Global School 2010 - 2014</copyright>
+	<copyright>THINK Global School 2010 - 2015</copyright>
 	<license>GNU Public License version 2</license>
 	<requires>
 		<type>elgg_release</type>
@@ -19,7 +19,7 @@
 	<requires>
 		<type>plugin</type>
 		<name>roles</name>
-		<version>1.9</version>
+		<version>1.10</version>
 		<comparison>ge</comparison>
 	</requires>
 	<requires>

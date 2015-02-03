@@ -5,12 +5,12 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2014
+ * @copyright THINK Global School 2010 - 2015
  * @link http://www.thinkglobalschool.com/
  * 
  */
 
-$english = array(
+return array(
 	// Generic
 	'forum' => 'Forum',
 	'forum_topic' => 'Topic',
@@ -129,6 +129,7 @@ $english = array(
 
 	// New forum notification (for groups or subscribed)
 	'forums:new_forum:subject' => 'New Forum',
+	'forums:new_forum:summary' => 'New Forum: %s',
 	'forums:new_forum:body' => "%s created a new forum titled: %s\n\n%s\n\nTo create a topic or view this forum, click here:\n%s
 ",
 	
@@ -170,5 +171,3 @@ To reply to this or view the topic, click here:
 	'groups:enableforums' => 'Enable group forums',
 	'groups:enableforum' => 'Enable group discussions',
 );
-
-add_translation('en',$english);
