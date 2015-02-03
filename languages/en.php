@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -13,6 +13,7 @@
 $english = array(
 	// Generic
 	'forum' => 'Forum',
+	'forum_topic' => 'Topic',
 	'forums' => 'Forums',
 	'item:object:forum' => 'Forums',
 	'item:object:forum_topic' => 'Forum Topics',
@@ -25,6 +26,8 @@ $english = array(
 
 	// Page titles 
 	'forums:title:allforums' => 'All Site Forums',
+	'forums:title:globalforums' => 'Global Forums',
+	'forums:title:groupforums' => 'Group Forums',
 	'forums:title:topics' => 'Discussion Topics',
 	'forums:title:topicedit' => 'Edit Topic',
 	'forums:title:replyedit' => 'Edit reply',
@@ -50,7 +53,7 @@ $english = array(
 	'forums:label:dateline' => 'posted %s', 
 	'forums:label:topicstartedby' => ' Started by %s',
 	'forums:label:replytothis' => 'Reply to this',
-	'forums:label:replytotopic' => 'Reply to topic',
+	'forums:label:replytotopic' => 'Post to topic',
 	'forums:label:totopic' => '&nbsp;to topic: %s',
 	'forums:label:moderatedby' => 'Moderated by: %s',
 	'forums:label:anonymous' => 'Anonymous',
@@ -64,11 +67,31 @@ $english = array(
 	'forums:label:discussiondisabled' => 'Discussions Moved',
 	'forums:label:redirectforums' => 'Discussions have been moved to %s',
 	'forums:label:closethread' => 'Close Topic',
+	'forums:label:closereplythread' => 'Close Thread',
 	'forums:label:openthread' => 'Open Topic',
-	'forums:label:closeconfirm' => 'Are you sure you want to close this topic?',
-	'forums:label:openconfirm' => 'Are you sure you want to open this topic?',
+	'forums:label:openreplythread' => 'Open Thread',
+	'forums:label:optout' => 'Stop topic notifications',
+	'forums:label:optin' => 'Get topic notifications',
+	'forums:label:closeconfirm' => 'Are you sure you want to close this topic/thread?',
+	'forums:label:openconfirm' => 'Are you sure you want to open this topic/thread?',
 	'forums:label:closed' => 'Topic closed',
 	'forums:label:closeddesc' => 'This topic has been closed by a moderator',
+	'forums:label:lastpost' => 'Last post: %s',
+	'forums:label:never' => 'Never',
+	'forums:label:inmask' => 'In %s',
+	'forums:label:viewstats' => 'View Stats',
+	'foruma:label:statsmask' => '%s Stats',
+	'forums:label:close' => 'Close',
+	'forums:label:closed' => '[CLOSED]',
+
+	// Forum stats
+	'forums:stats:totals' => '<strong>%s</strong> out of <strong>%s</strong> group members are participating in this %s.',
+	'forums:stats:member' => 'Member',
+	'forums:stats:numreplies' => '# of posts',
+	'forums:stats:totalwordcount' => 'Total reply word count',
+	'forums:stats:participatingmembers' => 'Participating Members',
+	'forums:stats:notparticipatingmembers' => 'Not Participating Members',
+	'forums:stats:repliestoreplies' => '# of replies',
 
 	// River
 	'river:create:object:forum_reply_river' => '%s posted a reply to the topic %s in the forum %s',
@@ -90,7 +113,7 @@ $english = array(
 	'forums:error:forum_reply:save' => 'There was an error saving the reply',
 	'forums:error:forum_reply:edit' => 'There was an error editing the reply', 
 	'forums:error:invalidstatus' => 'Invalid status',
-	'forums:error:setstatus' => 'There was an error setting the topic status',
+	'forums:error:setstatus' => 'There was an error setting the topic/thread status',
 
 	'forums:success:forum:save' => 'Successfully saved forum',
 	'forums:success:forum:delete' => 'Successfully deleted the forum',
@@ -100,6 +123,9 @@ $english = array(
 	'forums:success:forum_reply:delete' => 'Successfully deleted the reply',
 	'forums:success:forum_topic:open' => 'Topic opened',
 	'forums:success:forum_topic:closed' => 'Topic closed',
+	'forums:success:forum_reply:open' => 'Thread opened',
+	'forums:success:forum_reply:closed' => 'Thread closed',
+	'forums:success:forum_topic:notifications' => 'Successfuly set topic notifications settings',
 
 	// New forum notification (for groups or subscribed)
 	'forums:new_forum:subject' => 'New Forum',

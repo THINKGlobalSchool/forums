@@ -24,7 +24,8 @@
 }
 
 .forum .forum-topics {
-	
+	border-top: 1px dotted #CCC;
+	padding-top: 10px;
 }
 
 .forum .forum-topics-header {
@@ -52,10 +53,24 @@
 
 .forum-reply {
 	box-shadow: -1px 1px 4px #bbb;
-	-webkit-border-radius: 10px 3px 3px 3px;
-	-moz-border-radius: 10px 3px 3px 3px;
-	border-radius: 10px 3px 3px 3px;
-	margin-top: 10px;
+	margin-bottom: 4px;
+}
+
+.forum-reply-module.forum-reply-active {
+	border: 2px solid #333 !important;
+	box-shadow: 0px 0px 10px #85161d;
+}
+
+.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-head {
+	background: linear-gradient(-180deg, rgb(171, 51, 45) 0%, rgb(127, 19, 25) 100%);
+	padding: 4px;
+}
+
+.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-body {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 9px;
+	padding-top: 11px;
 }
 
 .forum-topic .forum-reply-icon {
@@ -103,6 +118,50 @@
 .moderator_mask {
 	font-weight: bolder;
 	color: #333;
+}
+
+.forum-entity-menu-item  {
+	width:75px;	
+	font-weight: bolder;
+	color: #666;
+}
+
+.forum-list {
+	border-top: 1px solid #ccc;
+}
+
+.forum-list > li {
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+
+.forum-list > li:nth-child(odd) {
+	background-color: #fff;
+}
+
+.forum-list > li:nth-child(even) {
+	background-color: #f0f0f0;
+}
+
+.forum-list > li .elgg-image-block {
+	padding: 4px 0 6px;
+	margin: 0;
+	margin-right: 10px;
+}
+
+.forum-list > li .elgg-image-block .elgg-body:first-child {
+	margin-left: 6px;
+}
+
+/** Forum stats **/
+.forum-participation-count {
+	color: #444;
+}
+
+.forum-stats-module {
+	margin: 15px;
+	box-shadow: 2px 2px 3px #666;
 }
 
 /** Elgg overrides **/

@@ -5,7 +5,7 @@
  * @package Forums
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010
+ * @copyright THINK Global School 2010 - 2014
  * @link http://www.thinkglobalschool.com/
  * 
  */
@@ -64,19 +64,32 @@ if ($full) {
 		));
 	}
 
-	$title = "<div class='elgg-subtext forum-reply-subtext'>$owner_link $dateline</div> $metadata";
+	if ($reply->reply_status == 'closed') {
+		$closed_text = '&nbsp;' . elgg_echo('forums:label:closed');
+	}
+
+	$title = "<div class='elgg-subtext forum-reply-subtext'>$owner_link $dateline $closed_text</div>$metadata";
 
 	$content = "<div class='forum-reply-description'>" . elgg_view('output/longtext', array(
 		'value' => $reply->description
 	)) . "</div>";
 
 	// Logged in and open topics only
-	if (elgg_is_logged_in() && $topic->topic_status != 'closed') {
+	if ($vars['parent_open'] === NULL) {
+		$parent_open = $topic->topic_status != 'closed';
+	} else {
+		$parent_open = $vars['parent_open'];
+	}
+	$thread_open = $reply->reply_status != 'closed' && $parent_open;
+	$vars['parent_open'] = $thread_open;
+
+	if (elgg_is_logged_in() && $topic->topic_status != 'closed' && $thread_open) {
 		$content .= elgg_view('output/url', array(
 			'text' => elgg_view_icon('speech-bubble') . elgg_echo("forums:label:replytothis"),
 			'href' => '#forum-reply-edit-form-' . $reply->guid,
 			'class' => 'forum-reply-button reply-to-reply',
 			'rel' => 'toggle',
+			'data-reply_guid' => $reply->guid,
 		)) . "<div style='clear: both;'></div>";
 
 		// Reply form vars
@@ -90,6 +103,9 @@ if ($full) {
 
 		$content .= elgg_view_form('forums/forum_reply/save', $form_vars, $body_vars);
 	}
+
+	$vars['reply_limit'] = 0;
+	$vars['offset_key'] = 'offset';
 
 	$content .= elgg_view('forums/replies', $vars);
 
