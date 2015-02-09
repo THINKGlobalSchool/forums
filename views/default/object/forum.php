@@ -97,7 +97,7 @@ ___HTML;
 		'limit' => 1
 	));
 
-	if (count($last_post)) {
+	if ($last_post && count($last_post)) {
 		$last_post = $last_post[0];
 		$owner = $last_post->getOwnerEntity();
 		// If anonymous, display as such

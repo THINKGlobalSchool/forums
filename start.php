@@ -94,10 +94,10 @@ function forums_init() {
 
 	// Notifications
 	elgg_register_notification_event('object', 'forum', array('create'));
-	elgg_register_plugin_hook_handler('prepare', 'notification:publish:object:forum', 'forum_prepare_notification');
+	elgg_register_plugin_hook_handler('prepare', 'notification:create:object:forum', 'forum_prepare_notification');
 
 	// Unregister 'discussions'
-	unregister_entity_type('object', 'groupforumtopic');
+	elgg_unregister_entity_type('object', 'groupforumtopic');
 
 	// Register forums and forum topics
 	elgg_register_entity_type('object', 'forum');
@@ -105,7 +105,7 @@ function forums_init() {
 	// elgg_register_entity_type('object', 'forum_reply');
 
 	// Unregister discussions
-	unregister_entity_type('object', 'groupforumtopic');
+	elgg_unregister_entity_type('object', 'groupforumtopic');
 
 	// Register URL handler (handles all subtypes)
 	elgg_register_plugin_hook_handler('entity:url', 'object', 'forum_url_handler');
@@ -346,6 +346,13 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			// Remove access for anonymous groups
 			if ($subtype == 'forum' && $item->getName() == 'access' && $entity->anonymous) {
 				unset($return[$idx]);
+				$options = array(
+					'name' => "access",
+					'text' =>  elgg_echo('forums:label:anonymous'),
+					'href' => FALSE,
+					'priority' => 100
+				);
+				$return[] = ElggMenuItem::factory($options);
 			}
 
 			// Remove delete button unless we're a group owner, moderator or admin
@@ -359,18 +366,6 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				}
 			}
 		}
-	}
-
-	// Add anonymous label
-	if ($subtype == 'forum' && $entity->anonymous) {
-		$options = array(
-			'name' => "access",
-			'text' =>  elgg_echo('forums:label:anonymous'),
-			'href' => FALSE,
-			'priority' => 100,
-			'section' => 'info',
-		);
-		$return[] = ElggMenuItem::factory($options);
 	}
 
 	// Count topics/replies for forum listing
@@ -407,8 +402,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:topiccount', array($topic_count)),
 			'priority' => 1100,
 			'item_class' => 'forum-entity-menu-item',
-			'href' => FALSE,
-			'section' => 'info',
+			'href' => FALSE
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -417,8 +411,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:replycount', array($reply_count)),
 			'priority' => 1000,
 			'item_class' => 'forum-entity-menu-item',
-			'href' => FALSE,
-			'section' => 'info',
+			'href' => FALSE
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -434,8 +427,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'name' => 'view_stats',
 				'text' => $view_stats,
 				'priority' => 150,
-				'href' => FALSE,
-				'section' => 'info',
+				'href' => FALSE
 			);
 			$return[] = ElggMenuItem::factory($options);
 		}
@@ -461,7 +453,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'priority' => 1000,
 			'item_class' => 'forum-entity-menu-item',
 			'href' => FALSE,
-			'section' => 'info',
+			
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -514,8 +506,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'name' => 'topic_closed',
 				'text' => elgg_echo('forums:label:closed'),
 				'priority' => 2,
-				'href' => FALSE,
-				'section' => 'info',
+				'href' => FALSE
 			);
 
 			$return[] = ElggMenuItem::factory($options);
@@ -533,8 +524,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'name' => 'view_stats',
 				'text' => $view_stats,
 				'priority' => 150,
-				'href' => FALSE,
-				'section' => 'info',
+				'href' => FALSE
 			);
 			$return[] = ElggMenuItem::factory($options);
 		}
@@ -546,19 +536,17 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			$options = array(
 				'name' => 'open_thread',
 				'text' => elgg_echo('forums:label:openreplythread'),
-				'priority' => 1,
+				'priority' => 200,
 				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=open",
-				'confirm' => elgg_echo('forums:label:openconfirm'),
-				'section' => 'actions',
+				'confirm' => elgg_echo('forums:label:openconfirm')
 			);
 		} else {
 			$options = array(
 				'name' => 'close_thread',
 				'text' => elgg_echo('forums:label:closereplythread'),
-				'priority' => 1,
+				'priority' => 200,
 				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=closed",
-				'confirm' => elgg_echo('forums:label:closeconfirm'),
-				'section' => 'actions',
+				'confirm' => elgg_echo('forums:label:closeconfirm')
 			);
 		}
 		$return[] = ElggMenuItem::factory($options);
@@ -801,7 +789,7 @@ function forum_prepare_notification($hook, $type, $notification, $params) {
 	$notification->subject = elgg_echo('forums:new_forum:subject');
 
     // Message body for the notification
-	$notification->body =elgg_echo('forums:new_forum:body', array(
+	$notification->body = elgg_echo('forums:new_forum:body', array(
 			$owner->name,
 			$entity->title,
 			$entity->description,
@@ -809,7 +797,7 @@ function forum_prepare_notification($hook, $type, $notification, $params) {
 	), $language);
 
     // The summary text is used e.g. by the site_notifications plugin
-    $notification->summary = elgg_echo('forums:new_forum:summary', array($entity->title), $language);
+    $notification->summary = elgg_echo('forums:new_forum:summary', array($owner->name, $entity->title), $language);
 
     return $notification;
 }

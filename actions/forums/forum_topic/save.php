@@ -88,8 +88,19 @@ if (!$guid) {
 
 	// Add river entries if we're posting in an anonymous forum
 	if (!$topic->getContainerEntity()->anonymous) {
-		add_to_river('river/object/forum_topic/create', 'create', elgg_get_logged_in_user_guid(), $topic->guid);
-		add_to_river('river/object/forum_reply/create', 'create', elgg_get_logged_in_user_guid(), $reply->guid);
+		elgg_create_river_item(array(
+			'view' => 'river/object/forum_topic/create',
+			'action_type' => 'create',
+			'subject_guid' => elgg_get_logged_in_user_guid(),
+			'object_guid' => $topic->guid
+		));
+
+		elgg_create_river_item(array(
+			'view' => 'river/object/forum_reply/create',
+			'action_type' => 'create',
+			'subject_guid' => elgg_get_logged_in_user_guid(),
+			'object_guid' => $reply->guid
+		));
 	}
 
 	// Add reply to relationship

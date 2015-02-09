@@ -25,7 +25,7 @@
 	<requires>
 		<type>plugin</type>
 		<name>modules</name>
-		<version>1.8</version>
+		<version>1.10</version>
 		<comparison>ge</comparison>
 	</requires>
 	<activate_on_install>true</activate_on_install>

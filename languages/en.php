@@ -45,6 +45,7 @@ return array(
 	'forums:label:no' => 'No',
 	'forums:label:moderator_role' => 'Moderator Role',
 	'forums:label:moderators' => 'Forum Moderators',
+	'forums:label:noforums' => 'No forums have been created',
 	'forums:label:notopics' => 'No topics have been created',
 	'forums:label:noreplies' => 'No replies have been created',
 	'forums:label:newtopic' => 'New Topic',
@@ -70,8 +71,8 @@ return array(
 	'forums:label:closereplythread' => 'Close Thread',
 	'forums:label:openthread' => 'Open Topic',
 	'forums:label:openreplythread' => 'Open Thread',
-	'forums:label:optout' => 'Stop topic notifications',
-	'forums:label:optin' => 'Get topic notifications',
+	'forums:label:optout' => 'Stop Topic Notifications',
+	'forums:label:optin' => 'Get Topic Notifications',
 	'forums:label:closeconfirm' => 'Are you sure you want to close this topic/thread?',
 	'forums:label:openconfirm' => 'Are you sure you want to open this topic/thread?',
 	'forums:label:closed' => 'Topic closed',
@@ -129,12 +130,13 @@ return array(
 
 	// New forum notification (for groups or subscribed)
 	'forums:new_forum:subject' => 'New Forum',
-	'forums:new_forum:summary' => 'New Forum: %s',
+	'forums:new_forum:summary' => '%s created a new forum titled: %s',
 	'forums:new_forum:body' => "%s created a new forum titled: %s\n\n%s\n\nTo create a topic or view this forum, click here:\n%s
 ",
 	
 	// New Forum Topic Notification
 	'forums:new_topic:subject' => 'New topic in Spot forum "%s"',
+	'forums:new_topic:summary' => "%s posted a new topic on the forum \"%s\" titled \"%s\"",
 	'forums:new_topic:body' => "%s has posted a new topic on the forum \"%s\" titled \"%s\"
 
 To reply to or view the topic, click here:
@@ -143,6 +145,7 @@ To reply to or view the topic, click here:
 ",
 	// New Forum Reply to Topic Notification
 	'forums:new_reply_topic:subject' => 'New reply in topic "%s" in Spot forum "%s"',
+	'forums:new_reply_topic:summary' => "%s posted a reply in topic \"%s\" in the forum \"%s\"",
 	'forums:new_reply_topic:body' => "%s has posted a reply in topic \"%s\" in the forum \"%s\"
 	
 It reads:
@@ -156,6 +159,7 @@ To reply to this or view the topic, click here:
 
 	// Reply to reply object (to replies owner) notification
 	'forums:new_reply_user:subject' => 'New reply to your post in Spot forum "%s"',
+	'forums:new_reply_user:summary' => "%s has replied to your post in the topic \"%s\" in Spot forum \"%s\"",
 	'forums:new_reply_user:body' => "%s has replied to your post in the topic \"%s\" in Spot forum \"%s\"
 	
 It reads:

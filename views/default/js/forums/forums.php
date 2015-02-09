@@ -16,16 +16,16 @@ elgg.provide('elgg.forums');
 // Init function
 elgg.forums.init = function() {
 	// Delegate view stats click
-	$(document).delegate('li.elgg-menu-item-view-stats a', 'click', elgg.forums.viewStatsClick);
+	$(document).on( 'click', 'li.elgg-menu-item-view-stats a', elgg.forums.viewStatsClick);
 
 	// Delegate stats close link
-	$(document).delegate('.forum-stats-close', 'click', elgg.forums.statsCloseClick);
+	$(document).on('click', '.forum-stats-close', elgg.forums.statsCloseClick);
 
 	// Delegate reply mouseover/mouseout
-	$(document).delegate('.reply-to-reply', 'mouseover mouseout', elgg.forums.replyHover);
+	$(document).on( 'mouseover mouseout', '.reply-to-reply', elgg.forums.replyHover);
 
 	// Delegate reply click
-	$(document).delegate('.reply-to-reply', 'click', elgg.forums.replyClick);
+	$(document).on('click', '.reply-to-reply', elgg.forums.replyClick);
 
 	// Show the moderator mask input
 	$('select#anonymous').change(function() {
@@ -74,7 +74,11 @@ elgg.forums.replyHover = function(event) {
 		if (event.type == 'mouseover') {
 			$reply_container.addClass('forum-reply-active');
 		} else if (event.type == 'mouseout') {
-			$reply_container.removeClass('forum-reply-active');
+			var $target_form = $($(this).attr('href'));
+
+			if (!$target_form.is(':visible')) {
+				$reply_container.removeClass('forum-reply-active');
+			}
 		}
 	}
 }
@@ -82,10 +86,13 @@ elgg.forums.replyHover = function(event) {
 // Reply click handler
 elgg.forums.replyClick = function(event) {
 	var $reply_container = $('#forum-reply-' + $(this).data('reply_guid'));
+
 	if ($(this).hasClass('elgg-state-active')) {
-		$reply_container.addClass('forum-reply-active');
-	} else {
 		$reply_container.removeClass('forum-reply-active');
+		$(this).removeClass('elgg-state-active');
+	} else {
+		$reply_container.addClass('forum-reply-active');
+		$(this).addClass('elgg-state-active');
 	}
 }
 

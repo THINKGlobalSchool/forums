@@ -83,7 +83,12 @@ if (!$guid) {
 
 	// Add river entry if we're not posting in an anonymous forum
 	if (!$reply->getContainerEntity()->anonymous) {
-		add_to_river('river/object/forum_reply/create', 'create', elgg_get_logged_in_user_guid(), $reply->guid);
+		elgg_create_river_item(array(
+			'view' => 'river/object/forum_reply/create',
+			'action_type' => 'create',
+			'subject_guid' => elgg_get_logged_in_user_guid(),
+			'object_guid' => $reply->guid
+		));
 	}
 }
 

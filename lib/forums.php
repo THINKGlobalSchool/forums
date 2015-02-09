@@ -446,19 +446,36 @@ function forums_notify_new_topic($topic) {
 
 			$sender_guid = $sender_info['guid'];
 			$sender_name = $sender_info['name'];
+
+			$subject = elgg_echo('forums:new_topic:subject', array(
+					$forum->title,
+			));
+
+			$body = elgg_echo('forums:new_topic:body', array(
+				$sender_name,
+				$forum->title,
+				$topic->title,
+				$topic->getURL()
+			));
+
+			$summary = elgg_echo('forums:new_topic:summary', array(
+				$sender_name,
+				$forum->title,
+				$topic->title
+			));
+
+			$params = array(
+				'object' =>  $topic,
+				'action' => 'create',
+				'summary' => $summary
+			);
 			
 			notify_user(
 				$n,
 				$sender_guid,
-				elgg_echo('forums:new_topic:subject', array(
-					$forum->title,
-				)),
-				elgg_echo('forums:new_topic:body', array(
-					$sender_name,
-					$forum->title,
-					$topic->title,
-					$topic->getURL()
-				))
+				$subject,
+				$body,
+				$params
 			);
 		}
 	}
@@ -541,36 +558,71 @@ function forums_notify_new_reply($reply) {
 			// If replying to a topic, or sending notification to an owner/moderator
 			if (elgg_instanceof($parent, 'object', 'forum_topic') || $n != $parent->owner_guid) {
 			
+				$subject = elgg_echo('forums:new_reply_topic:subject', array(
+					$topic->title,
+					$forum->title
+				));
+
+				$body = elgg_echo('forums:new_reply_topic:body', array(
+					$sender_name,
+					$topic->title,
+					$forum->title,
+					$reply->description,
+					$topic->getURL() . "#forum-reply-{$reply->guid}",
+				));
+
+				$summary = elgg_echo('forums:new_reply_topic:summary', array(
+					$sender_name,
+					$topic->title,
+					$forum->title
+				));
+
+				$params = array(
+					'object' => $reply,
+					'action' => 'create',
+					'summary' =>  $summary
+				);
+
 				notify_user(
 					$n,
 					$sender_guid,
-					elgg_echo('forums:new_reply_topic:subject', array(
-						$topic->title,
-						$forum->title,
-					)),
-					elgg_echo('forums:new_reply_topic:body', array(
-						$sender_name,
-						$topic->title,
-						$forum->title,
-						$reply->description,
-						$topic->getURL() . "#forum-reply-{$reply->guid}",
-					))
+					$subject,
+					$body,
+					$params
 				);
 			} else {
 				// Send a more personal message to the owner of the reply
+				$subject = elgg_echo('forums:new_reply_user:subject', array(
+					$forum->title,
+				));
+
+				$body = elgg_echo('forums:new_reply_user:body', array(
+					$sender_name,
+					$topic->title,
+					$forum->title,
+					$reply->description,
+					$topic->getURL() . "#forum-reply-{$reply->guid}",
+				));
+
+				$summary = elgg_echo('forums:new_reply_user:summary', array(
+					$sender_name,
+					$topic->title,
+					$forum->title,
+					$reply->description
+				));
+
+				$params = array(
+					'object' => $reply,
+					'action' => 'create',
+					'summary' => $summary
+				);
+
 				notify_user(
 					$n,
 					$sender_guid,
-					elgg_echo('forums:new_reply_user:subject', array(
-						$forum->title,
-					)),
-					elgg_echo('forums:new_reply_user:body', array(
-						$sender_name,
-						$topic->title,
-						$forum->title,
-						$reply->description,
-						$topic->getURL() . "#forum-reply-{$reply->guid}",
-					))
+					$subject,
+					$body, 
+					$params
 				);
 			}
 		}

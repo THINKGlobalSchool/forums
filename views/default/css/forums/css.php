@@ -56,17 +56,29 @@
 	margin-bottom: 4px;
 }
 
+.forum-reply-module .forum-reply-module {
+	margin-top: 10px;
+}
+
+.forum-reply-module h3 > ul.elgg-menu-entity {
+	font-size: 75%;
+}
+
 .forum-reply-module.forum-reply-active {
 	border: 2px solid #333 !important;
-	box-shadow: 0px 0px 10px #85161d;
+	box-shadow: 0px 0px 10px #444;
 }
 
-.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-head {
-	background: linear-gradient(-180deg, rgb(171, 51, 45) 0%, rgb(127, 19, 25) 100%);
-	padding: 4px;
+.forum-reply-module.forum-reply-active > .elgg-head {
+	background: #4787b8;
+	padding: 9px;
 }
 
-.forum-reply-module.forum-reply-active.forum-reply-module > .elgg-body {
+.forum-reply-module.forum-reply-active > .elgg-head * {
+	color: #FFF !important;
+}
+
+.forum-reply-module.forum-reply-active > .elgg-body {
 	padding-left: 9px;
 	padding-right: 9px;
 	padding-bottom: 9px;
@@ -76,12 +88,12 @@
 .forum-topic .forum-reply-icon {
 	margin-right: 5px;
 	vertical-align: middle;
+	margin-top: -2px;
 }
 
 .forum-topic .forum-reply-subtext {
 	text-transform: none;
 	float: left;
-	margin-top: 2px;
 }
 
 .forum-topic .forum-reply-description {
@@ -94,7 +106,7 @@
 }
 
 .forum-topic .forum-reply-button {
-	font-size: 11px;
+	font-size: 90%;
 }
 
 .forum-topic .reply-to-reply {
@@ -104,6 +116,8 @@
 
 .forum-topic .forum-reply-button .elgg-icon {
 	vertical-align: middle;
+	margin-bottom: 2px;
+	margin-right: 4px;
 }
 
 .forum-topic .forum-reply-subtext a:hover, .forum-topic .forum-reply-button:hover {
@@ -126,14 +140,10 @@
 	color: #666;
 }
 
-.forum-list {
-	border-top: 1px solid #ccc;
-}
+.forum-list {}
 
-.forum-list > li {
-	border-bottom: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
+.forum-list.elgg-list > li {
+	border: none !important;
 }
 
 .forum-list > li:nth-child(odd) {
@@ -177,38 +187,4 @@
 /** Forum reply indent **/
 .forum-reply ul {
 	margin-left: 20px;
-}
-
-/** Forum reply module **/
-
-.forum-reply-module {
-	margin-bottom: 5px;
-	border-radius: 10px 3px 3px 3px;
-}
-
-.forum-reply-module > .elgg-body {
-	/*border-left: 6px solid #CCC;*/
-	padding: 10px 1px 10px 10px;
-}
-
-.forum-reply-module > .elgg-head {
-    background-color: #666;
-    padding: 4px 1px 3px 4px;
-}
-
-.forum-reply-module > .elgg-head * {
-	text-transform: none;
-	font-size: 13px;
-}
-
-.forum-reply-module .elgg-menu-item-edit {
-	margin-right: 15px;
-}
-
-.forum-reply-module .elgg-menu-item-delete {
-	margin-left: 0;
-}
-
-.forum-reply-module .forum-reply-icon {
-	margin-left: 3px;
 }
