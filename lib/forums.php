@@ -649,7 +649,7 @@ function forums_get_owner_moderator_notify_list($forum) {
 		$moderator_role = get_entity($forum->moderator_role);
 		
 		// Get moderator role members
-		$members = $moderator_role->getMembers(0);
+		$members = $moderator_role->getMembers(array('limit' => 0));
 
 		// Notify list
 		$notify_users = array();
@@ -832,7 +832,7 @@ function forums_get_group_members_stats($forum_entity, $group) {
 	$dbprefix = elgg_get_config('dbprefix');
 
 	// Get group members info
-	$group_members = $group->getMembers(0);
+	$group_members = $group->getMembers(array('limit' => 0));
 	$group_member_guids = array();
 
 	foreach ($group_members as $member) {

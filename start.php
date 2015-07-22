@@ -402,7 +402,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:topiccount', array($topic_count)),
 			'priority' => 1100,
 			'item_class' => 'forum-entity-menu-item',
-			'href' => FALSE
+			'href' => FALSE,
+			'section' => 'info'
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -411,7 +412,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'text' => elgg_echo('forums:label:replycount', array($reply_count)),
 			'priority' => 1000,
 			'item_class' => 'forum-entity-menu-item',
-			'href' => FALSE
+			'href' => FALSE,
+			'section' => 'info'
 		);
 		$return[] = ElggMenuItem::factory($options);
 
@@ -427,7 +429,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'name' => 'view_stats',
 				'text' => $view_stats,
 				'priority' => 150,
-				'href' => FALSE
+				'href' => FALSE,
+				'section' => 'info'
 			);
 			$return[] = ElggMenuItem::factory($options);
 		}
@@ -453,6 +456,7 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			'priority' => 1000,
 			'item_class' => 'forum-entity-menu-item',
 			'href' => FALSE,
+			'section' => 'info'
 			
 		);
 		$return[] = ElggMenuItem::factory($options);
@@ -524,7 +528,8 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 				'name' => 'view_stats',
 				'text' => $view_stats,
 				'priority' => 150,
-				'href' => FALSE
+				'href' => FALSE,
+				'section' => 'info'
 			);
 			$return[] = ElggMenuItem::factory($options);
 		}
@@ -536,17 +541,19 @@ function forums_setup_entity_menu($hook, $type, $return, $params) {
 			$options = array(
 				'name' => 'open_thread',
 				'text' => elgg_echo('forums:label:openreplythread'),
-				'priority' => 200,
+				'priority' => 1,
 				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=open",
-				'confirm' => elgg_echo('forums:label:openconfirm')
+				'confirm' => elgg_echo('forums:label:openconfirm'),
+				'section' => 'actions'
 			);
 		} else {
 			$options = array(
 				'name' => 'close_thread',
 				'text' => elgg_echo('forums:label:closereplythread'),
-				'priority' => 200,
+				'priority' => 1,
 				'href' => "action/forums/forum_reply/status?guid={$entity->getGUID()}&status=closed",
-				'confirm' => elgg_echo('forums:label:closeconfirm')
+				'confirm' => elgg_echo('forums:label:closeconfirm'),
+				'section' => 'actions'
 			);
 		}
 		$return[] = ElggMenuItem::factory($options);
